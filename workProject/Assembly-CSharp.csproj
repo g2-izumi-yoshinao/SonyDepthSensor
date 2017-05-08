@@ -65,6 +65,8 @@
      <Compile Include="Assets\UnityChan\Scripts\UnityChanControlScriptWithRgidBody.cs" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_eye.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_fuku.shader" />
+     <None Include="Assets\Character\Shader\groundShader.shader" />
+     <None Include="Assets\Character\Shader\stealthShader.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\readme.txt" />
      <None Include="Assets\README_SD_KohakuChanz.txt" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_fuku_ds.shader" />
