@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{C39D280D-6A3A-3277-9106-02916D659AC0}</ProjectGuid>
+    <ProjectGuid>{AE7812B3-9DB1-459F-9D5F-6458CEABF4CF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Character\Script\AncherController.cs" />
+     <Compile Include="Assets\Character\Script\FaceCapture.cs" />
      <Compile Include="Assets\Character\Script\ReactionCharacterController.cs" />
      <Compile Include="Assets\Character\Work\testFinger.cs" />
      <Compile Include="Assets\UnityChan\Scripts\AutoBlink.cs" />
