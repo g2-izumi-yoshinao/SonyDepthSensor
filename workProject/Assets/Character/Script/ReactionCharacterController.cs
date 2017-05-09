@@ -110,8 +110,13 @@ public class ReactionCharacterController : MonoBehaviour {
 	private bool reqResetStartPointOnGround=false;
 
 	private AncHandPrior handPrior = AncHandPrior.leftHand;
-	public  float maxCheekStretchLength = 1.0f; //center-cheek size
+	public  float maxCheekStretchLength = 3.0f; //center-cheek size
 
+	private float ancherBaseScal;
+	private float CheekStretchStartFrame = 102f;//current animation start stretch at 102 frame
+	private float CheekStretchFrameFullLen =   197f;
+	private float CheekStretchFrameLen =   95f;
+	private float CheekStretchSizeRate=0.2f;//stretch size rate bwtween animation with hand distance
 
 	private const float stayingJudgeDist = 0.0f;//magnitude range of keep staying.　depending on real meurement. on keyboad 0
 
@@ -124,7 +129,7 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	protected static int RootAnimationBaseLayor = 0;
 
-	private string CheekStretchAnimationClipName="";//treat as speed 0 clip animation play
+	private string CheekStretchAnimationClipName="Stretch";//treat as speed 0 clip animation play
 
 	private const float CharacterSize = 1.0f;
 	private float maxSlideOnGround=CharacterSize/4f;
@@ -546,7 +551,7 @@ public class ReactionCharacterController : MonoBehaviour {
 			rigid.isKinematic = true;
 			armSwingElapse = 0f;
 			footSwingElapse = 0f;
-
+			ancherBaseScal = (cheekLeftAnchor.position - cheekRightAnchor.position).magnitude;
 			ancherBaseDir = (cheekLeftAnchor.position - cheekRightAnchor.position).normalized;
 			Vector3 centerPoint = (cheekLeftAnchor.position + cheekRightAnchor.position)/2;
 			crossAncher= Instantiate (crossAncherPrefubRef, centerPoint, Quaternion.identity);
@@ -563,10 +568,13 @@ public class ReactionCharacterController : MonoBehaviour {
 		Vector3 centerPoint = (cheekLeftAnchor.position + cheekRightAnchor.position)/2;
 		Vector3 cheekCurrentDir = (cheekLeftAnchor.position - cheekRightAnchor.position).normalized;
 		//片方伸び量
-		float pulllen = (cheekLeftAnchor.position - cheekRightAnchor.position).magnitude /2.0f;
+		float pulllen = (cheekLeftAnchor.position - cheekRightAnchor.position).magnitude-ancherBaseScal;
 		float pullrate = pulllen / maxCheekStretchLength;
+		float animSartAdjus=CheekStretchStartFrame / CheekStretchFrameFullLen;
+		Debug.Log (animSartAdjus.ToString());
 
-		//animator.Play (CheekStretchAnimationClipName,RootAnimationBaseLayor,pullrate);	
+		float animPos = pullrate*CheekStretchSizeRate+animSartAdjus;
+		animator.Play (CheekStretchAnimationClipName,RootAnimationBaseLayor,animPos);	
 
 		Quaternion q = Quaternion.FromToRotation (ancherBaseDir, cheekCurrentDir);
 		crossAncher.transform.position = centerPoint;
@@ -580,8 +588,7 @@ public class ReactionCharacterController : MonoBehaviour {
 			jointTiredEffect (bone_Character1_LeftUpLeg, leftLegStartlocalDir);
 			jointTiredEffect (bone_Character1_RightUpLeg, rightLegStartlocalDir);
 		}
-
-	//Debug.Log (pulllen.ToString ());
+			
 		if (pulllen >= maxCheekStretchLength) {
 			int v =UnityEngine.Random.Range (0, 10);
 			if ((v % 2)==0) {//prior leftCheer;
@@ -701,6 +708,13 @@ public class ReactionCharacterController : MonoBehaviour {
 
 		if (diff.magnitude > 0.1) {
 			crossAncher.transform.position += diff * Time.deltaTime * 3;
+
+			float pulllen =diff.magnitude *2-ancherBaseScal;
+			float pullrate = pulllen / maxCheekStretchLength;
+			float animSartAdjus=CheekStretchStartFrame / CheekStretchFrameFullLen;
+			float animPos = pullrate*CheekStretchSizeRate+animSartAdjus;
+			animator.Play (CheekStretchAnimationClipName,RootAnimationBaseLayor,animPos);
+
 		} else {
 			onCheekShurink = false;
 			onePoint_Init (toCheekAncher);
