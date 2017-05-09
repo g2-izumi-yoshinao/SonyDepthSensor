@@ -186,7 +186,7 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	void LateUpdate () {
 
-		if (currentPinchState == PinchState.none) none_Update ();
+		if (currentPinchState == PinchState.none) none_LateUpdate ();
 		else if (currentPinchState == PinchState.head) onePoint_LateUpdate (headAnchor, true, true, true);
 		else if (currentPinchState == PinchState.handLeft) onePoint_LateUpdate (handLeftAnchor, false, true, true);
 		else if (currentPinchState == PinchState.handRight) onePoint_LateUpdate (handRightAnchor, true, false, true);
@@ -334,6 +334,8 @@ public class ReactionCharacterController : MonoBehaviour {
 		rightLegStartlocalDir = bone_Character1_RightUpLeg.InverseTransformPoint (bone_Character1_RightFoot.position).normalized;
 
 
+		armSwingElapse = armSwingTimeOut + 1;
+		footSwingElapse = footSwingTimeOut + 1;
 	}
 
 	//====================================================================================
@@ -342,6 +344,9 @@ public class ReactionCharacterController : MonoBehaviour {
 			transform.parent = null;
 			if (lastPinchState != PinchState.foot) {
 				transform.rotation = Quaternion.identity;
+			} else {
+				armSwingElapse = 0f;
+				footSwingElapse = 0f;
 			}
 			rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 			rigid.useGravity = true;
@@ -350,7 +355,14 @@ public class ReactionCharacterController : MonoBehaviour {
 	}
 
 	private void none_LateUpdate(){
-
+			if (!swingArm (true, true)) {
+				jointTiredEffect (bone_Character1_LeftArm, leftArmStartlocalDir);
+				jointTiredEffect (bone_Character1_RightArm, rightArmStartlocalDir);
+			}
+			if (!swingLeg ()) {
+				jointTiredEffect (bone_Character1_LeftUpLeg, leftLegStartlocalDir);
+				jointTiredEffect (bone_Character1_RightUpLeg, rightLegStartlocalDir);
+			}
 	}
 
 
