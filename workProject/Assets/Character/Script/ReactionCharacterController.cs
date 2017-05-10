@@ -42,6 +42,7 @@ public class ReactionCharacterController : MonoBehaviour {
 		rightHand
 	}
 		
+	public static string REACTINO_CHARACTER_TAG = "me";
 	public static string PINCH_POINT_PREFIX = "pinch";
 	private const string PINCH_HEAD_NAME = "pinchHeadPoint";
 	private const string PINCH_CHEEKLFET_NAME = "pinchCheekLeftPoint";
@@ -134,16 +135,37 @@ public class ReactionCharacterController : MonoBehaviour {
 	private const float CharacterSize = 1.0f;
 	private float maxSlideOnGround=CharacterSize/4f;
 
+	private AudioSource sound;
+
 	private Animator animator;
 	private Rigidbody rigid;
 	private bool loadFirst = true;
 
+	public bool onAction=true;
+
 	void Start () {
 		animator = GetComponent<Animator>();
 		rigid = GetComponent<Rigidbody> ();
+		sound = GetComponent<AudioSource> ();
 	}
+
+	public void clear(){
+		onAction = false;
+		headAnchor = null;
+		handLeftAnchor= null;
+		handRightAnchor= null;
+		cheekLeftAnchor= null;
+		cheekRightAnchor= null;
+		footAnchor= null;
+	}
+
 	
 	void Update () {
+
+		if (!onAction) {
+			return;
+		}
+
 		if (loadFirst) {
 			loadFirst = false;
 			initPinchRelated ();
@@ -186,6 +208,10 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	void LateUpdate () {
 
+		if (!onAction) {
+			return;
+		}
+
 		if (currentPinchState == PinchState.none) none_LateUpdate ();
 		else if (currentPinchState == PinchState.head) onePoint_LateUpdate (headAnchor, true, true, true);
 		else if (currentPinchState == PinchState.handLeft) onePoint_LateUpdate (handLeftAnchor, false, true, true);
@@ -224,7 +250,6 @@ public class ReactionCharacterController : MonoBehaviour {
 			} else {
 				headAnchor = null;
 			}
-
 		}else if(partName==PINCH_HANDLEFT_NAME){
 			if (pinch) {
 				handLeftAnchor = anchor;
@@ -655,6 +680,9 @@ public class ReactionCharacterController : MonoBehaviour {
 	}
 				
 	void OnCollisionEnter(Collision other) {
+		if (!onAction) {
+			return;
+		}
 		if (other.gameObject.tag == GROUND_TAG){
 			if (!onGround) {
 				//Debug.Log ("onGround");
@@ -664,6 +692,9 @@ public class ReactionCharacterController : MonoBehaviour {
 	}
 
 	void OnCollisionExit(Collision other) {
+		if (!onAction) {
+			return;
+		}
 		if (other.gameObject.tag == GROUND_TAG){
 			if (onGround) {
 				//Debug.Log ("remove Ground");
@@ -752,6 +783,12 @@ public class ReactionCharacterController : MonoBehaviour {
 			ancher.transform.rotation =ancher.transform.rotation* q;
 		}
 		swingArm (handlefSing, handRightSwing);
-			
 	}
+
+	//====================================================================================
+
+	public bool isOnGround(){
+		return onGround;
+	}
+
 }

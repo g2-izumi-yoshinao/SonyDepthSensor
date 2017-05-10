@@ -16,13 +16,28 @@ public class AncherController : MonoBehaviour {
 	private string lastTargetName;
 	private ReactionCharacterController pinchingCharacter;
 
+	public bool onAction=true;
+
 	void Start () {
 	}
 
 	void Update () {
+		if (!onAction) {
+			return;
+		}
+
 	}
 
+	public void clear(){
+		onAction = false;
+		pinchingCharacter = null;
+	}
+
+
 	void OnTriggerEnter(Collider other) {
+		if (!onAction) {
+			return;
+		}
 		if (!grapp) {
 			if (other.gameObject.tag.Substring (0, ReactionCharacterController.PINCH_POINT_PREFIX.Length) ==
 			    ReactionCharacterController.PINCH_POINT_PREFIX) {
@@ -30,9 +45,16 @@ public class AncherController : MonoBehaviour {
 				pinchingCharacter = other.gameObject.GetComponentInParent<ReactionCharacterController> ();
 			}
 		} 
+		if (other.gameObject.tag == SimpleCharacterController.POINT_POINT_TAG) {
+			SimpleCharacterController simpleCharacter= other.gameObject.GetComponentInParent<SimpleCharacterController> ();
+			simpleCharacter.onPoint ();
+		}
 	}
 
 	void OnTriggerExit(Collider other) {
+		if (!onAction) {
+			return;
+		}
 		if (other.gameObject.tag.Substring (0, ReactionCharacterController.PINCH_POINT_PREFIX.Length) ==
 			ReactionCharacterController.PINCH_POINT_PREFIX) {
 			if (other.tag == lastTargetName) {
@@ -48,6 +70,9 @@ public class AncherController : MonoBehaviour {
 	}
 
 	public void onFingerGrapStateChangedDelegate(bool grap){
+		if (!onAction) {
+			return;
+		}
 		grapp = grap;
 		if (pinchingCharacter != null) {
 			pinchingCharacter.pinchChanged (lastTargetName, grapp, this.transform);
@@ -55,6 +80,9 @@ public class AncherController : MonoBehaviour {
 	}
 
 	public void forceRemove(){
+		if (!onAction) {
+			return;
+		}
 		pinchingCharacter.pinchChanged (lastTargetName, false, null);
 		lastTargetName = "";
 		pinchingCharacter = null;

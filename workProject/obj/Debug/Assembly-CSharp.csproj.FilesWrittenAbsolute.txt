@@ -4,13 +4,11 @@
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/obj/Debug/Assembly-CSharp.dll.mdb
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEngine.dll
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEditor.dll
-/Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEngine.Advertisements.dll
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEngine.UI.dll
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEngine.Networking.dll
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEngine.PlaymodeTestsRunner.dll
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEngine.Analytics.dll
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEngine.HoloLens.dll
-/Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEngine.Purchasing.dll
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/UnityEngine.VR.dll
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/Mono.Cecil.dll
 /Users/izumi/__prj/sony/_SonyDepthSensor/workProject/Temp/bin/Debug/Unity.SerializationLogic.dll
