@@ -51,7 +51,6 @@ public class ReactionCharacterController : MonoBehaviour {
 	private const string PINCH_HANDRIGHT_NAME = "pinchHandRightPoint";
 	private const string PINCH_FOOT_NAME = "pinchFootPoint";
 
-	private const string GROUND_TAG = "ground";
 	private float groundPos = 0;
 	private bool onGround=false;
 	private GameObject ground;
@@ -87,6 +86,9 @@ public class ReactionCharacterController : MonoBehaviour {
 	private Vector3 prepreAnchorPosition;
 	private bool pinchUped=false;
 	private float pinchedJudgeCounter;
+
+
+	private AnimatorStateInfo currentBaseState;	
 
 
 	private Vector3 ancherBaseDir;
@@ -132,8 +134,8 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	private string CheekStretchAnimationClipName="Stretch";//treat as speed 0 clip animation play
 
-	private const float CharacterSize = 1.0f;
-	private float maxSlideOnGround=CharacterSize/4f;
+	private float characterSize = 1.0f;
+	private float maxSlideOnGround=0;
 
 	private AudioSource sound;
 
@@ -379,7 +381,7 @@ public class ReactionCharacterController : MonoBehaviour {
 	//====================================================================================
 	private void initPinchRelated(){
 
-		ground = GameObject.FindGameObjectWithTag(GROUND_TAG);
+		ground = GameObject.FindGameObjectWithTag(CommonStatic.GROUND_TAG);
 		groundPos = ground.transform.position.y + (ground.transform.transform.localScale.y / 2);
 
 		leftArmStartlocalDir = bone_Character1_LeftArm.InverseTransformPoint (bone_Character1_LeftForeArm.position).normalized;
@@ -391,6 +393,9 @@ public class ReactionCharacterController : MonoBehaviour {
 
 		armSwingElapse = armSwingTimeOut + 1;
 		footSwingElapse = footSwingTimeOut + 1;
+
+		characterSize = transform.lossyScale.y;
+		maxSlideOnGround=characterSize/4f;
 	}
 
 	//====================================================================================
@@ -715,7 +720,8 @@ public class ReactionCharacterController : MonoBehaviour {
 		if (!onAction) {
 			return;
 		}
-		if (other.gameObject.tag == GROUND_TAG){
+		if ((other.gameObject.tag == CommonStatic.GROUND_TAG)||
+			(other.gameObject.tag == CommonStatic.CAKE_TAG)){
 			if (!onGround) {
 				//Debug.Log ("onGround");
 				onGround = true;
@@ -727,7 +733,8 @@ public class ReactionCharacterController : MonoBehaviour {
 		if (!onAction) {
 			return;
 		}
-		if (other.gameObject.tag == GROUND_TAG){
+		if ((other.gameObject.tag == CommonStatic.GROUND_TAG)||
+			(other.gameObject.tag == CommonStatic.CAKE_TAG)){
 			if (onGround) {
 				//Debug.Log ("remove Ground");
 				onGround = false;

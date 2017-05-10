@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//
+//  ReactionCharacterController
+//  Created by Yoshinao Izumi on 2017/04/19.
+//  Copyright © 2017 Yoshinao Izumi All rights reserved.
+//
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,7 +33,6 @@ public class FxOnMe : MonoBehaviour {
 		if (other.gameObject.tag==ReactionCharacterController.REACTINO_CHARACTER_TAG) {
 			footing = other.gameObject;
 			if (Effect1 != null) {
-				
 				Effect1.SetActive (false);
 				Effect1.SetActive (true);
 			}
@@ -37,6 +42,7 @@ public class FxOnMe : MonoBehaviour {
 	void OnTriggerExit(Collider other) {
 		if (other.gameObject.tag==ReactionCharacterController.REACTINO_CHARACTER_TAG){
 			footing = null;
+			Effect1.SetActive (false);
 		}
 	}
 }
