@@ -246,39 +246,69 @@ public class ReactionCharacterController : MonoBehaviour {
 
 		if (partName == PINCH_HEAD_NAME) {
 			if (pinch) {
+				if (headAnchor != null) {//replace
+					onePoint_Init(anchor,true);
+				}
 				headAnchor = anchor;
 			} else {
-				headAnchor = null;
+				if ((headAnchor == anchor)||(anchor==null)) {
+					headAnchor = null;
+				}
 			}
 		}else if(partName==PINCH_HANDLEFT_NAME){
 			if (pinch) {
+				if (handLeftAnchor != null) {//replace
+					onePoint_Init(anchor,true);
+				}
 				handLeftAnchor = anchor;
 			} else {
-				handLeftAnchor = null;
+				if ((handLeftAnchor == anchor)||(anchor==null)) {
+					handLeftAnchor = null;
+				}
 			}
 		}else if(partName==PINCH_HANDRIGHT_NAME){
 			if (pinch) {
+				if (handRightAnchor != null) {//replace
+					onePoint_Init(anchor,true);
+				}
 				handRightAnchor = anchor;
 			} else {
-				handRightAnchor = null;
+				if ((handRightAnchor == anchor)||(anchor==null)) {
+					handRightAnchor = null;
+				}
 			}
 		}else if(partName==PINCH_CHEEKLFET_NAME){
 			if (pinch) {
+				if (cheekLeftAnchor != null) {//replace
+					onePoint_Init(anchor,true);
+				}
 				cheekLeftAnchor = anchor;
 			} else {
-				cheekLeftAnchor = null;
+				if ((cheekLeftAnchor == anchor)||(anchor==null)) {
+					cheekLeftAnchor = null;
+				}
 			}
 		}else if(partName==PINCH_CHEEKRIGHT_NAME){
 			if (pinch) {
+				if (cheekRightAnchor != null) {//replace
+					onePoint_Init(anchor,true);
+				}
 				cheekRightAnchor=anchor;
 			} else {
-				cheekRightAnchor = null;
+				if ((cheekRightAnchor == anchor)||(anchor==null)) {
+					cheekRightAnchor = null;
+				}
 			}
 		}else if(partName==PINCH_FOOT_NAME){
 			if (pinch) {
+				if (footAnchor != null) {//replace
+					onePoint_Init(anchor,true);
+				}
 				footAnchor=anchor;
 			} else {
-				footAnchor = null;
+				if ((footAnchor == anchor)||(anchor==null)) {
+					footAnchor = null;
+				}
 			}
 		}
 	}
@@ -393,11 +423,11 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	private void onePoint_Update(Transform ancher){
 		if (pinchStateChanged) {
-			onePoint_Init (ancher);
+			onePoint_Init (ancher,false);
 		}
 	}
 
-	private void onePoint_Init(Transform ancher){
+	private void onePoint_Init(Transform ancher,bool replace){
 		armSwingElapse = 0f;
 		footSwingElapse = 0f;
 		decSwingElapse = 0f;
@@ -406,8 +436,10 @@ public class ReactionCharacterController : MonoBehaviour {
 		preAnchorPosition = ancher.position;
 		prepreAnchorPosition = preAnchorPosition;
 		transform.parent = ancher;
-		pinchUped = false;
-		reqResetStartPointOnGround = true;
+		if (!replace) {
+			pinchUped = false;
+			reqResetStartPointOnGround = true;
+		}
 
 	}
 
@@ -760,7 +792,7 @@ public class ReactionCharacterController : MonoBehaviour {
 
 		} else {
 			onCheekShurink = false;
-			onePoint_Init (toCheekAncher);
+			onePoint_Init (toCheekAncher,false);
 			Destroy (crossAncher);
 			crossAncher = null;
 			transform.parent = toCheekAncher;

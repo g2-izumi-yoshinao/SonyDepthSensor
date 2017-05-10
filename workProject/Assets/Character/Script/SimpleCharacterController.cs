@@ -70,14 +70,16 @@ public class SimpleCharacterController : MonoBehaviour {
 		rigid.useGravity = true;
 		rigid.isKinematic = false;
 
-		if (pinchingCharacter != null) {
-			if (pinchingCharacter.isOnGround()) {
-				//seek to
-				Vector3 targetDir = new Vector3(pinchingCharacter.transform.position.x,
-					transform.position.y,
-					pinchingCharacter.transform.position.z);
+		if (acitonType == SimpleActinType.firstSon) {
+			if (pinchingCharacter != null) {
+				if (pinchingCharacter.isOnGround ()) {
+					//seek to
+					Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
+						                   transform.position.y,
+						                   pinchingCharacter.transform.position.z);
 
-				transform.root.LookAt (targetDir);
+					transform.root.LookAt (targetDir);
+				}
 			}
 		}
 
@@ -86,7 +88,7 @@ public class SimpleCharacterController : MonoBehaviour {
 	}
 
 	public void onPoint(){
-		
+		Debug.Log ("onPoint");
 	}
 		
 	void OnTriggerEnter(Collider other) {

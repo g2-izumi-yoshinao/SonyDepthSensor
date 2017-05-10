@@ -61,7 +61,7 @@ public class AncherController : MonoBehaviour {
 				if ((pinchingCharacter.getPinchState () == ReactionCharacterController.PinchState.cheek_cheek) 
 					||pinchingCharacter.getOnCheekShurink()){
 				} else {
-					pinchingCharacter.pinchChanged (lastTargetName, false, null);
+					pinchingCharacter.pinchChanged (lastTargetName, false, this.transform);
 					lastTargetName = "";
 					pinchingCharacter = null;
 				}
