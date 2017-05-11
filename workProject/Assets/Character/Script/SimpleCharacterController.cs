@@ -75,25 +75,19 @@ public class SimpleCharacterController : MonoBehaviour {
 	private float havingElapse;
 	private float havingTimeOut=3;//sec
 	private secondSon_Action secondsonActionState;
+	public GameObject cakePiecePref;
+	private float throwCakePieceElapse;
+	private float throwCakePieceEmit=10;
+	private float throwCakePieceCount=0;
+	private float throwCakePieceMax=3;
+	private float totalMaxCakePiceCnt=0;
+	private float totalMaxCakePiceMaxCnt=60;
 
 	//for thirdSon
 	private float armSinframeCnt;
 	private float armSignFreq = 12.0f;
 	private float bodySinframeCnt;
 	private float bodySignFreq = 4.0f;
-
-
-
-
-
-
-	//
-	public GameObject cakePiecePref;
-	private float throwCakeElapse;
-	private float throwCakeEmit=10;
-	private float throwCakeCount=0;
-	private float throwCakeMax=999;
-
 
 
 
@@ -223,6 +217,8 @@ public class SimpleCharacterController : MonoBehaviour {
 			loadFirst = false;
 			getSightEdgePoint ();
 
+			totalMaxCakePiceCnt = 0;
+
 			loadFirst = false;
 			Vector3 startPos;
 			int v =UnityEngine.Random.Range (0, 10);
@@ -246,7 +242,9 @@ public class SimpleCharacterController : MonoBehaviour {
 				initHaving = false;
 				lookTarget ();
 				havingElapse = 0;
+				throwCakePieceCount = 0;
 			}
+			secandSonThrowCakePiece ();
 			havingElapse += Time.deltaTime;
 			if (havingElapse > havingTimeOut) {
 				initWalking = true;
@@ -452,38 +450,30 @@ public class SimpleCharacterController : MonoBehaviour {
 		if (other.gameObject.tag == ReactionCharacterController.REACTINO_CHARACTER_TAG) {
 			pinchingCharacter = null;
 		}
-
 	}
 
 
+	private void secandSonThrowCakePiece(){
+		if (totalMaxCakePiceCnt > totalMaxCakePiceMaxCnt) {
+			return;
+		}
+		if (throwCakePieceCount > throwCakePieceMax) {
+			return;
+		}
+		if (throwCakePieceElapse > throwCakePieceEmit) {
+			throwCakePieceElapse = 0;
+		}
+		throwCakePieceElapse += Time.deltaTime;
+		throwCakePieceCount++;
+		totalMaxCakePiceCnt++;
 
+		float rx = UnityEngine.Random.value;
+		float rz = UnityEngine.Random.value;
 
-
-//	private void throwCakePiece(){
-//		if (throwCakeCount > throwCakeMax) {
-//			return;
-//		}
-//		if (throwCakeElapse > throwCakeEmit) {
-//			throwCakeElapse = 0;
-//		}
-//		throwCakeElapse += Time.deltaTime;
-//		throwCakeCount++;
-//
-//		Vector3 startPos = new Vector3 (
-//			transform.position.x+transform.forward.x/2,
-//			transform.position.y+0.5f, //* substitute
-//			transform.position.z+transform.forward.z/2);
-//
-//		float rx =UnityEngine.Random.Range (0, 3);
-//		float ry =UnityEngine.Random.Range (0, 3);
-//		float rz =UnityEngine.Random.Range (0, 3);
-//
-//		float y = transform.rotation.eulerAngles.y;
-//		Vector3 throwForce = new Vector3 (rx,ry,rz);
-//
-//		GameObject pirce=Instantiate (cakePiecePref, startPos, Quaternion.identity);
-//		pirce.GetComponent<Rigidbody> ().AddForce (throwForce, ForceMode.Impulse);
-//			
-//	}
+		Vector3 outDir = (transform.position - AimTarget.transform.position).normalized;
+		Vector3 putPos = new Vector3 (transform.position.x + outDir.x * rx, transform.position.y, transform.position.z + outDir.z*rz);
+		Instantiate (cakePiecePref, putPos, Quaternion.identity);
+			
+	}
 
 }
