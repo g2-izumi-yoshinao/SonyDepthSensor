@@ -51,12 +51,18 @@ public class SimpleCharacterController : MonoBehaviour {
 	private Vector3 leftTargetSidePoint;//camera sight edge
 	private Vector3 rightTargetSidePoint;//camera sight edge
 	private targetSideAttr sideAttr;
+	private bool onProximity=false;
+
 
 	//for firstSon
 	private int moveframeCnt = 0;
 	private float sigWait = 1.0f;
 	private float forwardSpeed = 0.5f;
 	private int ancflg=1;
+	private bool initAttack=false;
+	private float attachElapse;
+	private float attackTimeOut=3;//sec
+
 
 	//for secondSon
 	enum secondSon_Action {
@@ -170,13 +176,25 @@ public class SimpleCharacterController : MonoBehaviour {
 			//alpaon
 		}
 	
-		if ((pinchingCharacter != null)&&(pinchingCharacter.isOnGround ())) {
+		//onProximity
+		if (onProximity) {
+			if (initAttack) {
+				initAttack = false;
+				lookTarget ();
+				attachElapse = 0;
+				throwCakePieceCount = 0;
+			}
 				//seek to
-				Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
+			Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
 					                    transform.position.y,
 					                    pinchingCharacter.transform.position.z);
-				transform.root.LookAt (targetDir);
+										transform.root.LookAt (targetDir);
 
+			attachElapse += Time.deltaTime;
+			if (attachElapse > attackTimeOut) {
+				onProximity = false;
+				pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.none);
+			}
 		} else {
 
 			float arclength = AimTarget.transform.lossyScale.x / 2.0f;
@@ -441,7 +459,13 @@ public class SimpleCharacterController : MonoBehaviour {
 		//proximity-------
 		if (other.gameObject.tag == ReactionCharacterController.REACTINO_CHARACTER_TAG) {
 			 pinchingCharacter = other.gameObject.GetComponentInParent<ReactionCharacterController> ();
-
+			if (pinchingCharacter.isOnGround ()) {
+				if (acitonType == SimpleActinType.firstSon) {
+					onProximity = true;
+					initAttack = true;
+					pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.meetFirstSon);
+				}
+			}
 		}
 	}
 

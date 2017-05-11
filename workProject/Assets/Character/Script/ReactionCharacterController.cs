@@ -37,6 +37,14 @@ public class ReactionCharacterController : MonoBehaviour {
 		cheek_cheek 
 	}
 
+	public enum ActionOnGroundState {
+		none,
+		walking,
+		meetFirstSon,
+		meetSecondSon,
+		meetThiredSon
+	}
+
 	enum AncHandPrior {
 		leftHand,
 		rightHand
@@ -86,7 +94,6 @@ public class ReactionCharacterController : MonoBehaviour {
 	private Vector3 prepreAnchorPosition;
 	private bool pinchUped=false;
 	private float pinchedJudgeCounter;
-
 
 	private AnimatorStateInfo currentBaseState;	
 
@@ -139,6 +146,11 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	private AudioSource sound;
 
+
+	public bool stableType=false;
+	private ActionOnGroundState groundActionState;
+	private ActionOnGroundState groundBaseActionState;
+
 	private Animator animator;
 	private Rigidbody rigid;
 	private bool loadFirst = true;
@@ -149,6 +161,14 @@ public class ReactionCharacterController : MonoBehaviour {
 		animator = GetComponent<Animator>();
 		rigid = GetComponent<Rigidbody> ();
 		sound = GetComponent<AudioSource> ();
+
+		//default on ground actions
+		if (stableType) {
+			groundBaseActionState = ActionOnGroundState.none;
+		} else {
+			groundBaseActionState = ActionOnGroundState.walking;
+		}
+		groundActionState = groundBaseActionState;
 	}
 
 	public void clear(){
@@ -411,6 +431,14 @@ public class ReactionCharacterController : MonoBehaviour {
 			rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 			rigid.useGravity = true;
 			rigid.isKinematic = false;
+		}
+
+		if (onGround) {
+			if (groundActionState == ActionOnGroundState.walking) {
+				
+			}
+		} else {
+			groundActionState = groundBaseActionState;
 		}
 	}
 
@@ -828,6 +856,15 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	public bool isOnGround(){
 		return onGround;
+	}
+
+	//
+	public void switchOnGroundActinState(ActionOnGroundState state){
+		if (state == ReactionCharacterController.ActionOnGroundState.none) {
+			groundActionState = groundBaseActionState;
+		} else {
+			groundActionState = state;
+		}
 	}
 
 }
