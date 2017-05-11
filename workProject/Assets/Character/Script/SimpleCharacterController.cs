@@ -396,7 +396,17 @@ public class SimpleCharacterController : MonoBehaviour {
 			return false;
 		}
 		Vector3 currentPos = transform.position;
-		transform.position = getRotationXYTragetPos (transform.position, perRnd);
+		Vector3 nextPos = getRotationXYTragetPos (transform.position, rndflg*perRnd);
+
+		Vector3 rayDir = (GameObject.FindGameObjectWithTag ("MainCamera").transform.position - transform.position).normalized;
+		Ray ray = new Ray(transform.position,rayDir);
+		RaycastHit hit;
+		Collider col = AimTarget.GetComponent<Collider> ();
+		if (col.Raycast (ray, out hit, 5.0f)) {
+			rndflg = -1 * rndflg;
+			nextPos = getRotationXYTragetPos (transform.position, rndflg*perRnd);
+		}
+		transform.position = nextPos;
 		currentRnd -= perRnd;
 		Vector3 movedir = (transform.position - currentPos).normalized;
 		transform.rotation = Quaternion.LookRotation(movedir);
