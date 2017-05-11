@@ -39,11 +39,10 @@ public class SimpleCharacterController : MonoBehaviour {
 
 
 	private AnimatorStateInfo currentBaseState;	
-	//	static int StandingState = Animator.StringToHash ("Base Layer.Standing@loop");
-	//	static int RunningState = Animator.StringToHash ("Base Layer.Running@loop");
-	//	static int JanpingState = Animator.StringToHash ("Base Layer.Jumping");
-	//	static int PickUpDownState = Animator.StringToHash ("Base Layer.PickUpDown");
-	//	static int PickUpUpState = Animator.StringToHash ("Base Layer.PickUpUp");
+	static int StandingState = Animator.StringToHash ("Base Layer.Standing@loop");
+	static int JanpingState = Animator.StringToHash ("Base Layer.Jumping");
+	static int PickUpDownState = Animator.StringToHash ("Base Layer.Walking@loop");
+	static int PickUpUpState = Animator.StringToHash ("Base Layer.Having@loop");
 
 
 
@@ -59,13 +58,23 @@ public class SimpleCharacterController : MonoBehaviour {
 	private float forwardSpeed = 0.5f;
 	private int ancflg=1;
 
-	//for secandSon
+	//for secondSon
+	enum secondSon_Action {
+		walking,
+		having
+	}
+
 	private float rotationEula=0;
 	private float rndflg=1;
 	private bool onhaving=false;
 	private float perRnd=3;
+	private bool initWalking=false;
 	private float currentRnd=0;
 	private const float oneTimeRnd=30;
+	private bool initHaving=false;
+	private float havingElapse;
+	private float havingTimeOut=3;//sec
+	private secondSon_Action secondsonActionState;
 
 	//for thirdSon
 	private float armSinframeCnt;
@@ -226,25 +235,43 @@ public class SimpleCharacterController : MonoBehaviour {
 			}
 			transform.position = startPos;
 
-			lookTarget ();
-			//alpaon
+			//start waiking
+			secondsonActionState = secondSon_Action.walking;
+			initWalking = true;
 
-			currentRnd = oneTimeRnd;
 		}
 
+		if (secondsonActionState == secondSon_Action.having) {
+			if (initHaving) {
+				initHaving = false;
+				lookTarget ();
+				havingElapse = 0;
+			}
+			havingElapse += Time.deltaTime;
+			if (havingElapse > havingTimeOut) {
+				initWalking = true;
+				secondsonActionState = secondSon_Action.walking;
+			}
 
+		} else 	if (secondsonActionState == secondSon_Action.walking) {
+			if (initWalking) {
+				initWalking = false;
+				currentRnd = oneTimeRnd;
+			}
+			if (!rotaionXYTaget ()) {
+				initHaving = true;
+				secondsonActionState = secondSon_Action.having;
+			}
+		}
 
-		rotaionXYTaget ();
 
 	}
 
 	void secondSun_LateUpdate(){
-		lookTarget ();
+		
+
 	}
 
-	public void offHaving(){ //animation callback
-		onhaving = false;
-	}
 
 	//---------------------------------------------------------------
 	void thirdSun_Update(){
