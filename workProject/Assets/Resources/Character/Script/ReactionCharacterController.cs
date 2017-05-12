@@ -155,7 +155,7 @@ public class ReactionCharacterController : MonoBehaviour {
 	private Rigidbody rigid;
 	private bool loadFirst = true;
 
-	public bool onAction=true;
+	public bool onAction=false;
 
 	void Start () {
 		animator = GetComponent<Animator>();
@@ -169,6 +169,15 @@ public class ReactionCharacterController : MonoBehaviour {
 			groundBaseActionState = ActionOnGroundState.walking;
 		}
 		groundActionState = groundBaseActionState;
+
+	}
+
+	public void setAction(bool active){
+		if (active) {
+			onAction = true;
+		} else {
+			onAction = false;
+		}
 	}
 
 	public void clear(){

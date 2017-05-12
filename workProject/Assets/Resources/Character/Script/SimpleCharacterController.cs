@@ -48,9 +48,6 @@ public class SimpleCharacterController : MonoBehaviour {
 
 	//common 
 	public GameObject AimTarget;// should set by initFirstSon. public is for first test
-	private Vector3 leftTargetSidePoint;//camera sight edge
-	private Vector3 rightTargetSidePoint;//camera sight edge
-	private targetSideAttr sideAttr;
 	private bool onProximity=false;
 
 
@@ -103,7 +100,7 @@ public class SimpleCharacterController : MonoBehaviour {
 	private bool loadFirst = true;
 	private ReactionCharacterController pinchingCharacter;
 
-	public bool onAction=true;//finally set first false
+	private bool onAction=false;
 
 	void Start () {		
 
@@ -118,7 +115,14 @@ public class SimpleCharacterController : MonoBehaviour {
 		} else {
 			acitonType = SimpleActinType.thirdSon;
 		}
+	}
 
+	public void setAction(bool active){
+		if (active) {
+			onAction = true;
+		} else {
+			onAction = false;
+		}
 	}
 
 	public void clear(){
@@ -167,11 +171,6 @@ public class SimpleCharacterController : MonoBehaviour {
 		
 		if (loadFirst) {
 			loadFirst = false;
-			Vector3 startPos = new Vector3 (
-				AimTarget.transform.position.x,
-				AimTarget.transform.position.y+AimTarget.transform.lossyScale.y,
-				AimTarget.transform.position.z);
-			transform.position = startPos;
 			lookCamera ();
 			//alpaon
 		}
@@ -233,23 +232,7 @@ public class SimpleCharacterController : MonoBehaviour {
 		
 		if (loadFirst) {
 			loadFirst = false;
-			getSightEdgePoint ();
-
 			totalMaxCakePiceCnt = 0;
-
-			loadFirst = false;
-			Vector3 startPos;
-			int v =UnityEngine.Random.Range (0, 10);
-			if ((v % 2)==0) {
-				startPos = leftTargetSidePoint;
-				sideAttr = targetSideAttr.left;
-			} else {
-				startPos = rightTargetSidePoint;
-				sideAttr = targetSideAttr.right;
-			}
-			transform.position = startPos;
-
-			//start waiking
 			secondsonActionState = secondSon_Action.walking;
 			initWalking = true;
 
@@ -293,22 +276,6 @@ public class SimpleCharacterController : MonoBehaviour {
 	void thirdSun_Update(){
 		if (loadFirst) {
 			loadFirst = false;
-			getSightEdgePoint ();
-
-			loadFirst = false;
-			Vector3 startPos;
-			int v =UnityEngine.Random.Range (0, 10);
-			if ((v % 2)==0) {
-				startPos = leftTargetSidePoint;
-				sideAttr = targetSideAttr.left;
-			} else {
-				startPos = rightTargetSidePoint;
-				sideAttr = targetSideAttr.right;
-			}
-	
-			float hideback = AimTarget.transform.lossyScale.x / 2.0f;
-			startPos = new Vector3 (startPos.x, startPos.y, startPos.z - hideback);
-			transform.position = startPos;
 			lookCamera ();
 			//alpaon
 		}
@@ -351,35 +318,7 @@ public class SimpleCharacterController : MonoBehaviour {
 		//とりあえず直向
 		transform.LookAt(targetX0Y);
 	}
-
-	private void getSightEdgePoint(){
-
-		Vector3 cameraPos = GameObject.FindGameObjectWithTag ("MainCamera").transform.position;
-		Vector2 cameraXY = new Vector2 (cameraPos.x,cameraPos.z);
-		Vector2 aimTargetXY = new Vector2 (AimTarget.transform.position.x, AimTarget.transform.position.z);
-
-		Vector3 CamAimVec = (aimTargetXY - cameraXY);
-		float camAimLen = CamAimVec.magnitude;
-		float aimRadius = AimTarget.transform.lossyScale.x / 2.0f;
-
-		float cos_a = aimRadius / camAimLen;
-		float sin_ql = -cos_a; //sin(π-θ)=-cos(θ)
-		float cos_ql = Mathf.Sqrt (1 - sin_ql * sin_ql);
-		float sin_qr = -sin_ql; //sin(-θ)=--sin(θ)
-		float cos_qr = Mathf.Sqrt (1 - sin_qr * sin_qr);
-
-		Vector2 cambaseVec = aimTargetXY - cameraXY;
-		Vector3 leftBasePos = new Vector3 (cos_ql * cambaseVec.x - sin_ql * cambaseVec.y, 0,
-									sin_ql * cambaseVec.x + cos_ql * cambaseVec.y);
-		Vector3 rightBasePos = new Vector3 (cos_qr * cambaseVec.x - sin_qr * cambaseVec.y,0,
-			sin_qr * cambaseVec.x + cos_qr * cambaseVec.y);
-
-		Vector3 cameraX0Z = new Vector3 (cameraXY.x, 0, cameraXY.y);
-		leftTargetSidePoint = leftBasePos + cameraX0Z;
-		rightTargetSidePoint = rightBasePos + cameraX0Z;
-	}
-
-
+		
 	private bool swingBody(){
 
 		float signAmp = Mathf.Sin ((float)(2.0f * Mathf.PI * bodySignFreq * (bodySinframeCnt++ % 200) / 199.0f));
@@ -499,5 +438,4 @@ public class SimpleCharacterController : MonoBehaviour {
 		Instantiate (cakePiecePref, putPos, Quaternion.identity);
 			
 	}
-
 }

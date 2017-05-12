@@ -46,17 +46,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Character\Script\AncherController.cs" />
-     <Compile Include="Assets\Character\Script\CakePiece.cs" />
-     <Compile Include="Assets\Character\Script\CommonStatic.cs" />
-     <Compile Include="Assets\Character\Script\FaceCapture.cs" />
-     <Compile Include="Assets\Character\Script\FxOnMe.cs" />
-     <Compile Include="Assets\Character\Script\ReactionCharacterController.cs" />
-     <Compile Include="Assets\Character\Script\SimpleCharacterController.cs" />
-     <Compile Include="Assets\Character\Work\testButton.cs" />
-     <Compile Include="Assets\Character\Work\testFinger.cs" />
-     <None Include="Assets\Character\Shader\groundShader.shader" />
-     <None Include="Assets\Character\Shader\stealthShader.shader" />
+     <Compile Include="Assets\Resources\Character\Script\AncherController.cs" />
+     <Compile Include="Assets\Resources\Character\Script\CakePiece.cs" />
+     <Compile Include="Assets\Resources\Character\Script\CommonStatic.cs" />
+     <Compile Include="Assets\Resources\Character\Script\FaceCapture.cs" />
+     <Compile Include="Assets\Resources\Character\Script\FxOnMe.cs" />
+     <Compile Include="Assets\Resources\Character\Script\LoaderOutScene.cs" />
+     <Compile Include="Assets\Resources\Character\Script\ReactionCharacterController.cs" />
+     <Compile Include="Assets\Resources\Character\Script\SimpleCharacterController.cs" />
+     <Compile Include="Assets\Resources\Character\Work\testButton.cs" />
+     <Compile Include="Assets\Resources\Character\Work\testFinger.cs" />
+     <None Include="Assets\Resources\Character\Shader\groundShader.shader" />
+     <None Include="Assets\Resources\Character\Shader\stealthShader.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
