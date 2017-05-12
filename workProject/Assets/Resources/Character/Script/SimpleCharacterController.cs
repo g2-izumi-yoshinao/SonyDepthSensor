@@ -39,7 +39,7 @@ public class SimpleCharacterController : MonoBehaviour {
 
 	private static string ANIM_BASE_LAYER ="Base Layer";
 	private static string ANIM_STANDING_LOOP = ANIM_BASE_LAYER+"."+"Standing@loop";
-	private static string ANIM_WALKING_LOOP = ANIM_BASE_LAYER+"."+"Waiking@loop";
+	private static string ANIM_WALKING_LOOP = ANIM_BASE_LAYER+"."+"Walking@loop";
 	private static string ANIM_RUNNING_LOOP = ANIM_BASE_LAYER+"."+"Running@loop";
 	private static string ANIM_HAVING_LOOP = ANIM_BASE_LAYER+"."+"Having@loop";
 	private static string ANIM_WOW_JUMP = ANIM_BASE_LAYER+"."+"JumpWow";
@@ -51,7 +51,7 @@ public class SimpleCharacterController : MonoBehaviour {
 	static int HavingState = Animator.StringToHash (ANIM_HAVING_LOOP);
 	static int WowJumpState = Animator.StringToHash (ANIM_WOW_JUMP);
 
-	private static string ANIM_TRIGGER_WALKING_NAME = "Waiking";
+	private static string ANIM_TRIGGER_WALKING_NAME = "Walking";
 	private static string ANIM_TRIGGER_WOWJUMP_NAME = "WowJump";
 	private static string ANIM_TRIGGER_THROW_NAME = "Throw";
 	private static string ANIM_TRIGGER_HAVING_NAME = "Having";
@@ -106,9 +106,6 @@ public class SimpleCharacterController : MonoBehaviour {
 	private float armSignFreq = 12.0f;
 	private float bodySinframeCnt;
 	private float bodySignFreq = 4.0f;
-
-
-
 
 	private AudioSource sound;
 	private Animator animator;
