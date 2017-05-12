@@ -146,6 +146,12 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	private AudioSource sound;
 
+	private float alphaVal=0.0f;
+
+	public Material material_texture1;//even model is in test state  
+	public Material material_texture2;
+	public Material material_greenM;
+	public Material material_hadaM;
 
 	public bool stableType=false;
 	private ActionOnGroundState groundActionState;
@@ -170,6 +176,7 @@ public class ReactionCharacterController : MonoBehaviour {
 		}
 		groundActionState = groundBaseActionState;
 
+		setAlpha (0f);
 	}
 
 	public void setAction(bool active){
@@ -196,10 +203,14 @@ public class ReactionCharacterController : MonoBehaviour {
 		if (!onAction) {
 			return;
 		}
-
+			
 		if (loadFirst) {
 			loadFirst = false;
 			initPinchRelated ();
+		}
+
+		if (fadeIn ()) {
+			return;
 		}
 
 		currentPinchState = getPinchState ();
@@ -464,6 +475,7 @@ public class ReactionCharacterController : MonoBehaviour {
 
 
 	private void onePoint_Update(Transform ancher){
+
 		if (pinchStateChanged) {
 			onePoint_Init (ancher,false);
 		}
@@ -861,7 +873,6 @@ public class ReactionCharacterController : MonoBehaviour {
 		swingArm (handlefSing, handRightSwing);
 	}
 
-	//====================================================================================
 
 	public bool isOnGround(){
 		return onGround;
@@ -873,6 +884,65 @@ public class ReactionCharacterController : MonoBehaviour {
 			groundActionState = groundBaseActionState;
 		} else {
 			groundActionState = state;
+		}
+	}
+
+
+	private bool fadeIn(){
+		bool onProcess = true;
+		alphaVal += Time.deltaTime;
+		if (alphaVal >= 1.0f) {
+			alphaVal = 1.0f;
+			onProcess = false;
+		}
+		setAlpha (alphaVal);
+		return onProcess;
+	}
+
+	private bool fadeOut(){
+		bool onProcess = true;
+		alphaVal -= Time.deltaTime;
+		if (alphaVal < 0.0f) {
+			alphaVal = 0.0f;
+			onProcess = false;
+		}
+		setAlpha (alphaVal);
+		return onProcess;
+	}
+
+	private void setAlpha(float alpha){
+
+		if (alpha == 1.0) {
+
+			material_texture1.color 
+			    = new Color (material_texture1.color.r, material_texture1.color.g, material_texture1.color.b, alpha);
+			material_texture2.color 
+				= new Color (material_texture2.color.r, material_texture2.color.g, material_texture2.color.b, alpha);
+			material_greenM.color 
+				= new Color (material_greenM.color.r, material_greenM.color.g, material_greenM.color.b, alpha);
+			material_hadaM.color 
+				= new Color (material_hadaM.color.r, material_hadaM.color.g, material_hadaM.color.b, alpha);
+
+			CommonStatic.SetBlendMode(material_texture1,CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode(material_texture2,CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode(material_greenM,CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode(material_hadaM,CommonStatic.blendMode.Opaque);
+
+		}else{
+			CommonStatic.SetBlendMode(material_texture1,CommonStatic.blendMode.Transparent);
+			CommonStatic.SetBlendMode(material_texture2,CommonStatic.blendMode.Transparent);
+			CommonStatic.SetBlendMode(material_greenM,CommonStatic.blendMode.Transparent);
+			CommonStatic.SetBlendMode(material_hadaM,CommonStatic.blendMode.Transparent);
+
+			material_texture1.color 
+				= new Color (material_texture1.color.r, material_texture1.color.g, material_texture1.color.b, alpha);
+			material_texture2.color 
+				= new Color (material_texture2.color.r, material_texture2.color.g, material_texture2.color.b, alpha);
+			material_greenM.color 
+				= new Color (material_greenM.color.r, material_greenM.color.g, material_greenM.color.b, alpha);
+			material_hadaM.color 
+				= new Color (material_hadaM.color.r, material_hadaM.color.g, material_hadaM.color.b, alpha);
+
 		}
 	}
 

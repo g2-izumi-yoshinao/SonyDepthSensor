@@ -50,6 +50,12 @@ public class SimpleCharacterController : MonoBehaviour {
 	public GameObject AimTarget;// should set by initFirstSon. public is for first test
 	private bool onProximity=false;
 
+	private float alphaVal=0.0f;
+	public Material material_texture1;//even model is in test state  
+	public Material material_texture2;
+	public Material material_greenM;
+	public Material material_hadaM;
+
 
 	//for firstSon
 	private int moveframeCnt = 0;
@@ -437,5 +443,64 @@ public class SimpleCharacterController : MonoBehaviour {
 		Vector3 putPos = new Vector3 (transform.position.x + outDir.x * rx, transform.position.y, transform.position.z + outDir.z*rz);
 		Instantiate (cakePiecePref, putPos, Quaternion.identity);
 			
+	}
+
+
+	private bool fadeIn(){
+		bool onProcess = true;
+		alphaVal += Time.deltaTime;
+		if (alphaVal >= 1.0f) {
+			alphaVal = 1.0f;
+			onProcess = false;
+		}
+		setAlpha (alphaVal);
+		return onProcess;
+	}
+
+	private bool fadeOut(){
+		bool onProcess = true;
+		alphaVal -= Time.deltaTime;
+		if (alphaVal < 0.0f) {
+			alphaVal = 0.0f;
+			onProcess = false;
+		}
+		setAlpha (alphaVal);
+		return onProcess;
+	}
+
+	private void setAlpha(float alpha){
+
+		if (alpha == 1.0) {
+
+			material_texture1.color 
+			= new Color (material_texture1.color.r, material_texture1.color.g, material_texture1.color.b, alpha);
+			material_texture2.color 
+			= new Color (material_texture2.color.r, material_texture2.color.g, material_texture2.color.b, alpha);
+			material_greenM.color 
+			= new Color (material_greenM.color.r, material_greenM.color.g, material_greenM.color.b, alpha);
+			material_hadaM.color 
+			= new Color (material_hadaM.color.r, material_hadaM.color.g, material_hadaM.color.b, alpha);
+
+			CommonStatic.SetBlendMode(material_texture1,CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode(material_texture2,CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode(material_greenM,CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode(material_hadaM,CommonStatic.blendMode.Opaque);
+
+		}else{
+			CommonStatic.SetBlendMode(material_texture1,CommonStatic.blendMode.Transparent);
+			CommonStatic.SetBlendMode(material_texture2,CommonStatic.blendMode.Transparent);
+			CommonStatic.SetBlendMode(material_greenM,CommonStatic.blendMode.Transparent);
+			CommonStatic.SetBlendMode(material_hadaM,CommonStatic.blendMode.Transparent);
+
+			material_texture1.color 
+			= new Color (material_texture1.color.r, material_texture1.color.g, material_texture1.color.b, alpha);
+			material_texture2.color 
+			= new Color (material_texture2.color.r, material_texture2.color.g, material_texture2.color.b, alpha);
+			material_greenM.color 
+			= new Color (material_greenM.color.r, material_greenM.color.g, material_greenM.color.b, alpha);
+			material_hadaM.color 
+			= new Color (material_hadaM.color.r, material_hadaM.color.g, material_hadaM.color.b, alpha);
+
+		}
 	}
 }

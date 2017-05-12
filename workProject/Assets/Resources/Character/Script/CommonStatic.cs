@@ -43,4 +43,37 @@ public class CommonStatic : MonoBehaviour {
 	}
 
 
+	public enum blendMode
+	{
+		Opaque,
+		Transparent
+	}
+
+	public static void SetBlendMode(Material material, blendMode mode){
+
+		switch (mode)
+		{
+		case blendMode.Opaque:
+			material.SetOverrideTag("RenderType", "");
+			material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+			material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+			material.SetInt("_ZWrite", 1);
+			material.DisableKeyword("_ALPHATEST_ON");
+			material.DisableKeyword("_ALPHABLEND_ON");
+			material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+			material.renderQueue = -1;
+			break;
+		case blendMode.Transparent:
+			material.SetOverrideTag("RenderType", "Transparent");
+			material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+			material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+			material.SetInt("_ZWrite", 0);
+			material.DisableKeyword("_ALPHATEST_ON");
+			material.DisableKeyword("_ALPHABLEND_ON");
+			material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+			material.renderQueue = 3000;
+			break;
+		}
+	}
+
 }
