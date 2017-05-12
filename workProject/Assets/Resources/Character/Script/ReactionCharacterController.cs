@@ -772,7 +772,7 @@ public class ReactionCharacterController : MonoBehaviour {
 		if ((other.gameObject.tag == CommonStatic.GROUND_TAG)||
 			(other.gameObject.tag == CommonStatic.CAKE_TAG)){
 			if (!onGround) {
-				//Debug.Log ("onGround");
+				clearVelocityXZ ();
 				onGround = true;
 			}		
 		}
@@ -887,6 +887,10 @@ public class ReactionCharacterController : MonoBehaviour {
 		}
 	}
 
+	private void clearVelocityXZ(){
+		rigid.velocity = new Vector3 (0, rigid.velocity.y, 0);
+		rigid.angularVelocity = Vector3.zero;
+	}
 
 	private bool fadeIn(){
 		bool onProcess = true;

@@ -37,13 +37,24 @@ public class SimpleCharacterController : MonoBehaviour {
 	private Vector3 leftArmStartlocalDir;
 	private Vector3 rightArmStartlocalDir;
 
+	private static string ANIM_BASE_LAYER ="Base Layer";
+	private static string ANIM_STANDING_LOOP = ANIM_BASE_LAYER+"."+"Standing@loop";
+	private static string ANIM_WALKING_LOOP = ANIM_BASE_LAYER+"."+"Waiking@loop";
+	private static string ANIM_RUNNING_LOOP = ANIM_BASE_LAYER+"."+"Running@loop";
+	private static string ANIM_HAVING_LOOP = ANIM_BASE_LAYER+"."+"Having@loop";
+	private static string ANIM_WOW_JUMP = ANIM_BASE_LAYER+"."+"JumpWow";
 
-	private AnimatorStateInfo currentBaseState;	
-	static int StandingState = Animator.StringToHash ("Base Layer.Standing@loop");
-	static int JanpingState = Animator.StringToHash ("Base Layer.Jumping");
-	static int PickUpDownState = Animator.StringToHash ("Base Layer.Walking@loop");
-	static int PickUpUpState = Animator.StringToHash ("Base Layer.Having@loop");
+	private AnimatorStateInfo currentAnimationState;	
+	static int StandingState = Animator.StringToHash (ANIM_STANDING_LOOP);
+	static int WalkingState = Animator.StringToHash (ANIM_WALKING_LOOP);
+	static int RunningState = Animator.StringToHash (ANIM_RUNNING_LOOP);
+	static int HavingState = Animator.StringToHash (ANIM_HAVING_LOOP);
+	static int WowJumpState = Animator.StringToHash (ANIM_WOW_JUMP);
 
+	private static string ANIM_TRIGGER_WALKING_NAME = "Waiking";
+	private static string ANIM_TRIGGER_WOWJUMP_NAME = "WowJump";
+	private static string ANIM_TRIGGER_THROW_NAME = "Throw";
+	private static string ANIM_TRIGGER_HAVING_NAME = "Having";
 
 
 	//common 
@@ -73,9 +84,7 @@ public class SimpleCharacterController : MonoBehaviour {
 		having
 	}
 
-	private float rotationEula=0;
 	private float rndflg=1;
-	private bool onhaving=false;
 	private float perRnd=3;
 	private bool initWalking=false;
 	private float currentRnd=0;
@@ -97,6 +106,7 @@ public class SimpleCharacterController : MonoBehaviour {
 	private float armSignFreq = 12.0f;
 	private float bodySinframeCnt;
 	private float bodySignFreq = 4.0f;
+
 
 
 
@@ -144,10 +154,12 @@ public class SimpleCharacterController : MonoBehaviour {
 		if (loadFirst) {
 			commonInit ();
 		}
-
+			
 		rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 		rigid.useGravity = true;
 		rigid.isKinematic = false;
+
+		currentAnimationState = animator.GetCurrentAnimatorStateInfo (BodyAnimationLayor);
 
 		if (acitonType == SimpleActinType.firstSon) {
 			firstSun_Update ();
@@ -178,7 +190,12 @@ public class SimpleCharacterController : MonoBehaviour {
 		if (loadFirst) {
 			loadFirst = false;
 			lookCamera ();
-			//alpaon
+
+			if (currentAnimationState.fullPathHash == StandingState) {
+				Debug.Log ("");
+			}
+
+			animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 		}
 	
 		//onProximity
@@ -202,6 +219,10 @@ public class SimpleCharacterController : MonoBehaviour {
 			}
 		} else {
 
+			if (currentAnimationState.fullPathHash != WalkingState) {
+				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
+			}
+				
 			float arclength = AimTarget.transform.lossyScale.x / 2.0f;
 
 			moveframeCnt += 1;
@@ -250,6 +271,7 @@ public class SimpleCharacterController : MonoBehaviour {
 				lookTarget ();
 				havingElapse = 0;
 				throwCakePieceCount = 0;
+				animator.SetTrigger (ANIM_TRIGGER_HAVING_NAME);
 			}
 			secandSonThrowCakePiece ();
 			havingElapse += Time.deltaTime;
@@ -262,6 +284,8 @@ public class SimpleCharacterController : MonoBehaviour {
 			if (initWalking) {
 				initWalking = false;
 				currentRnd = oneTimeRnd;
+				clearVelocityXZ ();
+				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 			}
 			if (!rotaionXYTaget ()) {
 				initHaving = true;
@@ -283,8 +307,13 @@ public class SimpleCharacterController : MonoBehaviour {
 		if (loadFirst) {
 			loadFirst = false;
 			lookCamera ();
-			//alpaon
 		}
+
+
+		if (currentAnimationState.fullPathHash == RunningState) {
+			//びっくり後 移動処理 
+		}
+
 
 	}
 		
@@ -386,17 +415,26 @@ public class SimpleCharacterController : MonoBehaviour {
 			current.y, (nom.x * sin + nom.y * cos) + aimTargetXY.y);
 		return ret;
 	}
-
-
-
-
+		
 
 
 	//=====================================================
 	public void onPoint(){
-		Debug.Log ("finger onPoint");
+
+		if (acitonType == SimpleActinType.firstSon) {
+			
+		} else if (acitonType == SimpleActinType.secondSon) {
+			
+		} else if (acitonType == SimpleActinType.thirdSon) {
+			animator.SetTrigger (ANIM_TRIGGER_WOWJUMP_NAME);
+		}
+
 	}
 		
+
+
+
+
 	void OnTriggerEnter(Collider other) {
 		if (!onAction) {
 			return;
@@ -445,6 +483,10 @@ public class SimpleCharacterController : MonoBehaviour {
 			
 	}
 
+	private void clearVelocityXZ(){
+		rigid.velocity = new Vector3 (0, rigid.velocity.y, 0);
+		rigid.angularVelocity = Vector3.zero;
+	}
 
 	private bool fadeIn(){
 		bool onProcess = true;

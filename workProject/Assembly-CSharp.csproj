@@ -55,6 +55,7 @@
      <Compile Include="Assets\Resources\Character\Script\ReactionCharacterController.cs" />
      <Compile Include="Assets\Resources\Character\Script\SimpleCharacterController.cs" />
      <Compile Include="Assets\Resources\Character\Work\testButton.cs" />
+     <Compile Include="Assets\Resources\Character\Work\testChara.cs" />
      <Compile Include="Assets\Resources\Character\Work\testFinger.cs" />
      <None Include="Assets\Resources\Character\Shader\groundShader.shader" />
      <None Include="Assets\Resources\Character\Shader\stealthShader.shader" />
