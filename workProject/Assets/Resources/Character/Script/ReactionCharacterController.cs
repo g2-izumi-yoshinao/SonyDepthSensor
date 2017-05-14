@@ -137,11 +137,24 @@ public class ReactionCharacterController : MonoBehaviour {
 	public Transform cheekLeftShurinkTarget;
 	public Transform cheekRightShurinkTarget;
 
-	protected static int RootAnimationBaseLayor = 0;
+	protected static int BodyAnimationLayor = 0;
+
+	private AnimatorStateInfo currentAnimationState;	
+	static int StandingState = Animator.StringToHash (ANIM_STANDING_LOOP);
+	static int WalkingState = Animator.StringToHash (ANIM_WALKING_LOOP);
+
+	private static string ANIM_BASE_LAYER ="Base Layer";
+	private static string ANIM_STANDING_LOOP = ANIM_BASE_LAYER+"."+"Standing@loop";
+	private static string ANIM_WALKING_LOOP = ANIM_BASE_LAYER+"."+"Walking@loop";
+
+	private static string ANIM_TRIGGER_STANDING_NAME = "Standing";
+	private static string ANIM_TRIGGER_WALKING_NAME = "Walking";
+
+
 
 	private string CheekStretchAnimationClipName="Stretch";//treat as speed 0 clip animation play
 
-	private float characterSize = 1.0f;
+	private float characterSize = 1.0f;//be set modvalue lossy scale on start()
 	private float maxSlideOnGround=0;
 
 	private AudioSource sound;
@@ -152,6 +165,12 @@ public class ReactionCharacterController : MonoBehaviour {
 	public Material material_texture2;
 	public Material material_greenM;
 	public Material material_hadaM;
+
+
+	private int moveframeCnt = 0;
+	private float sigWait = 1.0f;
+	private float forwardSpeed = 0.3f;
+	private int ancflg=1;
 
 	public bool stableType=false;
 	private ActionOnGroundState groundActionState;
@@ -212,6 +231,7 @@ public class ReactionCharacterController : MonoBehaviour {
 		if (fadeIn ()) {
 			return;
 		}
+		currentAnimationState = animator.GetCurrentAnimatorStateInfo (BodyAnimationLayor);
 
 		currentPinchState = getPinchState ();
 		pinchStateChanged = (lastPinchState != currentPinchState);
@@ -284,8 +304,7 @@ public class ReactionCharacterController : MonoBehaviour {
 	}
 
 	public void pinchChanged(string partName,bool pinch,Transform anchor){
-		Debug.Log ("pinchChanged:" + partName+":"+pinch.ToString());
-
+		//Debug.Log ("pinchChanged:" + partName+":"+pinch.ToString());
 		if (partName == PINCH_HEAD_NAME) {
 			if (pinch) {
 				if (headAnchor != null) {//replace
@@ -454,9 +473,44 @@ public class ReactionCharacterController : MonoBehaviour {
 		}
 
 		if (onGround) {
+			
 			if (groundActionState == ActionOnGroundState.walking) {
-				
+				if (currentAnimationState.fullPathHash != WalkingState) {
+					animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
+				}
+
+				moveframeCnt += 1;
+				if (moveframeCnt > 10000) {
+					moveframeCnt = 0;
+				}
+				float dz = 0f;
+				float dx = 0f;
+
+				dz = ancflg * Mathf.Sin (2.0f * Mathf.PI * sigWait * (float)(moveframeCnt % 200) / (200.0f - 1.0f));
+				dx = ancflg * Mathf.Sqrt (1.0f - Mathf.Pow (dz, 2));
+
+				Vector3 seekPois = transform.position 
+					+ (new Vector3 (dx * forwardSpeed * 2, transform.position.y-0.2f, dz * forwardSpeed * 2));
+
+				bool findGround = false;
+				Collider[] edges = Physics.OverlapSphere (seekPois, 0.1f, -1, QueryTriggerInteraction.Collide);
+				for (int i = 0; i < edges.Length; i++) {
+					if (edges [i].gameObject.tag == CommonStatic.GROUND_TAG) {
+						findGround = true;
+						break;
+					}
+				}
+				if (!findGround) {
+					ancflg = -1 * ancflg;
+				}
+				Vector3 direction = new Vector3 (dx, 0, dz);
+				transform.rotation = Quaternion.LookRotation (direction);
+				transform.localPosition += transform.forward * forwardSpeed * Time.fixedDeltaTime;
+
+			} else {
+				//stand idle
 			}
+
 		} else {
 			groundActionState = groundBaseActionState;
 		}
@@ -481,6 +535,11 @@ public class ReactionCharacterController : MonoBehaviour {
 		}
 	}
 
+	//require skin mesh render
+	void OnBecameInvisible(){
+		ancflg = -1 * ancflg;
+	}
+
 	private void onePoint_Init(Transform ancher,bool replace){
 		armSwingElapse = 0f;
 		footSwingElapse = 0f;
@@ -495,6 +554,11 @@ public class ReactionCharacterController : MonoBehaviour {
 			reqResetStartPointOnGround = true;
 		}
 
+		clearVelocityXZ ();
+
+		if (currentAnimationState.fullPathHash != StandingState) {
+			animator.SetTrigger (ANIM_TRIGGER_STANDING_NAME);
+		}
 	}
 
 	private void onePoint_LateUpdate(Transform ancher,bool handlefSing, bool handRightSwing, bool footSwing){
@@ -697,7 +761,7 @@ public class ReactionCharacterController : MonoBehaviour {
 		Debug.Log (animSartAdjus.ToString());
 
 		float animPos = pullrate*CheekStretchSizeRate+animSartAdjus;
-		animator.Play (CheekStretchAnimationClipName,RootAnimationBaseLayor,animPos);	
+		animator.Play (CheekStretchAnimationClipName,BodyAnimationLayor,animPos);	
 
 		Quaternion q = Quaternion.FromToRotation (ancherBaseDir, cheekCurrentDir);
 		crossAncher.transform.position = centerPoint;
@@ -775,6 +839,8 @@ public class ReactionCharacterController : MonoBehaviour {
 				clearVelocityXZ ();
 				onGround = true;
 			}		
+		}else if ((other.gameObject.tag == CommonStatic.CAKE_TAG)||(other.gameObject.tag == CommonStatic.CAP_TAG)){
+			ancflg = -1 * ancflg;
 		}
 	}
 
@@ -844,7 +910,7 @@ public class ReactionCharacterController : MonoBehaviour {
 			float pullrate = pulllen / maxCheekStretchLength;
 			float animSartAdjus=CheekStretchStartFrame / CheekStretchFrameFullLen;
 			float animPos = pullrate*CheekStretchSizeRate+animSartAdjus;
-			animator.Play (CheekStretchAnimationClipName,RootAnimationBaseLayor,animPos);
+			animator.Play (CheekStretchAnimationClipName,BodyAnimationLayor,animPos);
 
 		} else {
 			onCheekShurink = false;

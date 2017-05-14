@@ -1,3 +1,9 @@
+//
+//  FaceCapture
+//  Created by Yoshinao Izumi on 2017/04/19.
+//  Copyright © 2017 Yoshinao Izumi All rights reserved.
+//
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

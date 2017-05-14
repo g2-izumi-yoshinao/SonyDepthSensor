@@ -1,5 +1,5 @@
 ﻿//
-//  ReactionCharacterController
+//  SimpleCharacterController
 //  Created by Yoshinao Izumi on 2017/04/19.
 //  Copyright © 2017 Yoshinao Izumi All rights reserved.
 //
@@ -51,6 +51,7 @@ public class SimpleCharacterController : MonoBehaviour {
 	static int HavingState = Animator.StringToHash (ANIM_HAVING_LOOP);
 	static int WowJumpState = Animator.StringToHash (ANIM_WOW_JUMP);
 
+	private static string ANIM_TRIGGER_STANDING_NAME = "Standing";
 	private static string ANIM_TRIGGER_WALKING_NAME = "Walking";
 	private static string ANIM_TRIGGER_WOWJUMP_NAME = "WowJump";
 	private static string ANIM_TRIGGER_THROW_NAME = "Throw";
@@ -71,7 +72,7 @@ public class SimpleCharacterController : MonoBehaviour {
 	//for firstSon
 	private int moveframeCnt = 0;
 	private float sigWait = 1.0f;
-	private float forwardSpeed = 0.5f;
+	private float forwardSpeed = 0.3f;
 	private int ancflg=1;
 	private bool initAttack=false;
 	private float attachElapse;

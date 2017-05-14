@@ -1,5 +1,5 @@
 ﻿//
-//  ReactionCharacterController
+//  FxOnMe
 //  Created by Yoshinao Izumi on 2017/04/19.
 //  Copyright © 2017 Yoshinao Izumi All rights reserved.
 //
