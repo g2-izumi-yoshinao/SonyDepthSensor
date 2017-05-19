@@ -12,6 +12,7 @@ public class CommonStatic : MonoBehaviour {
 	public static string GROUND_TAG = "ground";
 	public static string CAKE_TAG = "cake";
 	public static string CAP_TAG = "cap";
+	public static string SON_TAG = "son";
 
 	public static Vector3[] getSightEdgePoint(GameObject aimTarget){
 

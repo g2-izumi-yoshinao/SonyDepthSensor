@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{503EA740-286A-5790-13FD-23EB44D9EE81}") = "SonyDepthSensorNonS", "Assembly-CSharp.csproj", "{6B1E4E6A-2422-083C-55AE-09316334EE00}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B1E4E6A-2422-083C-55AE-09316334EE00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B1E4E6A-2422-083C-55AE-09316334EE00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B1E4E6A-2422-083C-55AE-09316334EE00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B1E4E6A-2422-083C-55AE-09316334EE00}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal

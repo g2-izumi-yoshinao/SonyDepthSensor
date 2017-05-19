@@ -20,7 +20,7 @@ public class testFinger : MonoBehaviour {
 	public AncherController ancherLeft;
 	public AncherController ancherRight;
 
-	private float rate = 0.01f;
+	private float rate = 0.001f;
 	private bool first=true;
 
 	private bool currentLeftGrap =false;
@@ -73,8 +73,7 @@ public class testFinger : MonoBehaviour {
 				ancherLeft.transform.position = new Vector3 (ancherLeft.transform.position.x - rate, ancherLeft.transform.position.y, ancherLeft.transform.position.z);
 			}
 		} 
-
-
+						
 		if (Input.GetKey (KeyCode.R)) {
 			grapRight = true;
 		}

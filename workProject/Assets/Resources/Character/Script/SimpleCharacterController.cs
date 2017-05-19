@@ -72,7 +72,7 @@ public class SimpleCharacterController : MonoBehaviour {
 	//for firstSon
 	private int moveframeCnt = 0;
 	private float sigWait = 1.0f;
-	private float forwardSpeed = 0.3f;
+	private float forwardSpeed = 0.05f;
 	private int ancflg=1;
 	private bool initAttack=false;
 	private float attachElapse;
@@ -205,15 +205,17 @@ public class SimpleCharacterController : MonoBehaviour {
 				throwCakePieceCount = 0;
 			}
 				//seek to
-			Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
-					                    transform.position.y,
-					                    pinchingCharacter.transform.position.z);
-										transform.root.LookAt (targetDir);
+			if (pinchingCharacter != null) {
+				Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
+					                   transform.position.y,
+					                   pinchingCharacter.transform.position.z);
+				transform.root.LookAt (targetDir);
 
-			attachElapse += Time.deltaTime;
-			if (attachElapse > attackTimeOut) {
-				onProximity = false;
-				pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.none);
+				attachElapse += Time.deltaTime;
+				if (attachElapse > attackTimeOut) {
+					onProximity = false;
+					pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.none);
+				}
 			}
 		} else {
 
@@ -233,7 +235,7 @@ public class SimpleCharacterController : MonoBehaviour {
 			dz = ancflg*Mathf.Sin (2.0f * Mathf.PI * sigWait * (float)(moveframeCnt % 200) / (200.0f - 1.0f));
 			dx = ancflg*Mathf.Sqrt (1.0f - Mathf.Pow (dz, 2));
 
-			Vector3 footpos = transform.position - (new Vector3 (0, 0.2f, 0));
+			Vector3 footpos = new Vector3(transform.position.x,AimTarget.transform.position.y, transform.position.z);
 
 			float distCenter = (footpos - AimTarget.transform.position).magnitude;
 			if (distCenter > arclength*0.9) {
@@ -347,7 +349,8 @@ public class SimpleCharacterController : MonoBehaviour {
 
 	//=====================================================
 	private void lookTarget(){
-		Vector3 targetX0Y = new Vector3 (AimTarget.transform.position.x,0,AimTarget.transform.position.z);
+		Vector3 targetX0Y = new Vector3 (AimTarget.transform.position.x,AimTarget.transform.position.y,
+			AimTarget.transform.position.z);
 		//とりあえず直向
 		transform.LookAt(targetX0Y);
 	}
@@ -429,10 +432,6 @@ public class SimpleCharacterController : MonoBehaviour {
 
 	}
 		
-
-
-
-
 	void OnTriggerEnter(Collider other) {
 		if (!onAction) {
 			return;

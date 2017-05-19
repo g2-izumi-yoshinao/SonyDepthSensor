@@ -27,20 +27,18 @@ public class LoaderOutScene : MonoBehaviour {
 
 	//sencor value estimage 
 
-	private float scaleCharacter = 20;//may required caluc self in relation with cake scale or some
+	private float scaleCharacter = 1.5f;//may required caluc self in relation with cake scale or some
 
-	//camrea rotation now y180
-	private Vector3 postionMainCamera = new Vector3(-2f,2f,7f);
+	private Vector3 postionMainCamera = new Vector3(0f,0,0f);
 
-	private Vector3 postionGround = new Vector3(0f,-0.5f,0f);
-	private Vector3 scaleGround =  new Vector3(20f,1f,20f);
+	private Vector3 postionGround = new Vector3(0f,-0.77f,-1.1f);
+	private Vector3 scaleGround =  new Vector3(1.5f,1f,1.5f);
 
-	private Vector3 postionCake = new Vector3(-3.5f,0.4f,0f);
-	private Vector3 scaleCake =  new Vector3(4f,0.8f,4f);
+	private Vector3 postionCake = new Vector3(-0.1f,-0.05f,-0.6f);
+	private Vector3 scaleCake =  new Vector3(0.2f,0.05f,0.2f);
 
-	private Vector3 postionCap = new Vector3(1.3f,0.5f,0f);
-	private Vector3 scaleCap =  new Vector3(1f,0.5f,1f);
-
+	private Vector3 postionCap = new Vector3(0.3f,-0.03f,-0.6f);
+	private Vector3 scaleCap =  new Vector3(0.1f,0.1f,0.1f);
 
 	void Start () {
 		//sensor start 
@@ -85,10 +83,23 @@ public class LoaderOutScene : MonoBehaviour {
 				//second son
 				edges= CommonStatic.getSightEdgePoint (cakeObj);
 				randomVal =UnityEngine.Random.Range (0, 10);
-				Vector3 secondSonStartPos=((randomVal % 2)==0)?edges[0]:edges[1];
+				//Vector3 secondSonStartPos=((randomVal % 2)==0)?edges[0]:edges[1];
+				Vector3 secondSonStartPos;
+				bool edg0 = false;
+				if ((randomVal % 2) == 0) {
+					edg0 = true;
+					secondSonStartPos=edges [0];
+				} else {
+					secondSonStartPos=edges [1];
+				}
 				son = Instantiate (sonPrefabs [1], secondSonStartPos, Quaternion.identity);
 				son.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
 				sonObjs [1] = son.GetComponentInChildren<SimpleCharacterController> (true);
+				if (edg0) {
+					son.transform.position += new Vector3(-1.0f*son.transform.lossyScale.y/40.0f, 0, 0);
+				} else {
+					son.transform.position += new Vector3 (son.transform.lossyScale.y/40f, 0, 0);
+				}
 
 				//third son
 				edges= CommonStatic.getSightEdgePoint (capObj);
@@ -109,7 +120,7 @@ public class LoaderOutScene : MonoBehaviour {
 				}
 
 				//debug----
-				GameObject me=Instantiate(mePrefab,new Vector3(0,0,2), Quaternion.identity);
+				GameObject me=Instantiate(mePrefab,new Vector3(0.1f,-0.2f,-0.55f), Quaternion.identity);
 				me.transform.localScale = new Vector3(scaleCharacter, scaleCharacter, scaleCharacter);
 				meObj = me.GetComponentInChildren<ReactionCharacterController> (true);
 				meObj.setAction (true);

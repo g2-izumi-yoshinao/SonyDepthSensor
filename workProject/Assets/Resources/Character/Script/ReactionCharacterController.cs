@@ -150,8 +150,6 @@ public class ReactionCharacterController : MonoBehaviour {
 	private static string ANIM_TRIGGER_STANDING_NAME = "Standing";
 	private static string ANIM_TRIGGER_WALKING_NAME = "Walking";
 
-
-
 	private string CheekStretchAnimationClipName="Stretch";//treat as speed 0 clip animation play
 
 	private float characterSize = 1.0f;//be set modvalue lossy scale on start()
@@ -169,7 +167,7 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	private int moveframeCnt = 0;
 	private float sigWait = 1.0f;
-	private float forwardSpeed = 0.3f;
+	private float forwardSpeed = 0.05f;
 	private int ancflg=1;
 
 	public bool stableType=false;
@@ -179,6 +177,9 @@ public class ReactionCharacterController : MonoBehaviour {
 	private Animator animator;
 	private Rigidbody rigid;
 	private bool loadFirst = true;
+
+	public GameObject kirakiraEffect;
+
 
 	public bool onAction=false;
 
@@ -195,6 +196,9 @@ public class ReactionCharacterController : MonoBehaviour {
 		}
 		groundActionState = groundBaseActionState;
 
+		if (kirakiraEffect != null) {
+			kirakiraEffect.SetActive(false);
+		}
 		setAlpha (0f);
 	}
 
@@ -492,6 +496,7 @@ public class ReactionCharacterController : MonoBehaviour {
 				Vector3 seekPois = transform.position 
 					+ (new Vector3 (dx * forwardSpeed * 2, transform.position.y-0.2f, dz * forwardSpeed * 2));
 
+				//ground check
 				bool findGround = false;
 				Collider[] edges = Physics.OverlapSphere (seekPois, 0.1f, -1, QueryTriggerInteraction.Collide);
 				for (int i = 0; i < edges.Length; i++) {
@@ -500,9 +505,26 @@ public class ReactionCharacterController : MonoBehaviour {
 						break;
 					}
 				}
-				if (!findGround) {
+
+				//cake,cap,son
+				seekPois = transform.position 
+					+ (new Vector3 (dx * forwardSpeed * 2, transform.position.y+0.1f, dz * forwardSpeed * 2));
+
+				bool entryEny = false;
+				Collider[] objes = Physics.OverlapSphere (seekPois, 0.1f, -1, QueryTriggerInteraction.Collide);
+				for (int i = 0; i < objes.Length; i++) {
+					if ((objes [i].gameObject.tag == CommonStatic.CAP_TAG)||
+						(objes [i].gameObject.tag == CommonStatic.CAKE_TAG)||
+						(objes [i].gameObject.tag == CommonStatic.SON_TAG)){
+						entryEny = true;
+						break;
+					}
+				}
+
+				if ((!findGround)||(entryEny)) {
 					ancflg = -1 * ancflg;
 				}
+
 				Vector3 direction = new Vector3 (dx, 0, dz);
 				transform.rotation = Quaternion.LookRotation (direction);
 				transform.localPosition += transform.forward * forwardSpeed * Time.fixedDeltaTime;
@@ -960,10 +982,18 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	private bool fadeIn(){
 		bool onProcess = true;
+
 		alphaVal += Time.deltaTime;
 		if (alphaVal >= 1.0f) {
 			alphaVal = 1.0f;
 			onProcess = false;
+		}
+		if (onProcess) {
+			if (!kirakiraEffect.activeSelf) {
+				kirakiraEffect.SetActive (true);
+			}
+		} else {
+			kirakiraEffect.SetActive (false);
 		}
 		setAlpha (alphaVal);
 		return onProcess;
