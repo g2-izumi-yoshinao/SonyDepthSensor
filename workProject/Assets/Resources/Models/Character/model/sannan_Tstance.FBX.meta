@@ -1,0 +1,180 @@
+fileFormatVersion: 2
+guid: 4566a85b0cef84f1a8c325e5530b17e7
+timeCreated: 1495350916
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: charaA_anim_armbone001
+    100002: charaA_anim_armbone002
+    100004: charaA_anim_armbone003
+    100006: charaA_anim_armbone004
+    100008: charaA_anim_armbone006
+    100010: charaA_anim_armbone007
+    100012: charaA_anim_armbone008
+    100014: charaA_anim_armbone009
+    100016: charaA_anim_body001
+    100018: charaA_anim_body002
+    100020: charaA_anim_footbone001
+    100022: charaA_anim_footbone002
+    100024: charaA_anim_footbone005
+    100026: charaA_anim_footbone006
+    100028: charaA_anim_footIKpoint001
+    100030: charaA_anim_footIKpoint002
+    100032: charaA_anim_headbone001
+    100034: charaA_anim_hoho001
+    100036: charaA_anim_hoho002
+    100038: charaA_anim_koshi001
+    100040: charaA_anim_root
+    100042: charaA_off_arm001
+    100044: charaA_off_arm002
+    100046: charaA_off_armbone010
+    100048: charaA_off_armbone05
+    100050: charaA_off_foot001
+    100052: charaA_off_foot002
+    100054: charaA_off_footbone003
+    100056: charaA_off_footbone004
+    100058: charaA_off_footIK001
+    100060: charaA_off_footIK002
+    100062: charaA_off_footIKgoal001
+    100064: charaA_off_footIKgoal002
+    100066: charaA_off_headbone002
+    100068: charaA_off_hoho001
+    100070: charaA_off_hoho002
+    100072: charaA_off_koshi001
+    100074: charaA_rnd_arm
+    100076: charaA_rnd_arm001
+    100078: charaA_rnd_body
+    100080: charaA_rnd_foot
+    100082: charaA_rnd_foot001
+    100084: charaA_rnd_head
+    100086: charaA_rnd_heta01
+    100088: //RootNode
+    400000: charaA_anim_armbone001
+    400002: charaA_anim_armbone002
+    400004: charaA_anim_armbone003
+    400006: charaA_anim_armbone004
+    400008: charaA_anim_armbone006
+    400010: charaA_anim_armbone007
+    400012: charaA_anim_armbone008
+    400014: charaA_anim_armbone009
+    400016: charaA_anim_body001
+    400018: charaA_anim_body002
+    400020: charaA_anim_footbone001
+    400022: charaA_anim_footbone002
+    400024: charaA_anim_footbone005
+    400026: charaA_anim_footbone006
+    400028: charaA_anim_footIKpoint001
+    400030: charaA_anim_footIKpoint002
+    400032: charaA_anim_headbone001
+    400034: charaA_anim_hoho001
+    400036: charaA_anim_hoho002
+    400038: charaA_anim_koshi001
+    400040: charaA_anim_root
+    400042: charaA_off_arm001
+    400044: charaA_off_arm002
+    400046: charaA_off_armbone010
+    400048: charaA_off_armbone05
+    400050: charaA_off_foot001
+    400052: charaA_off_foot002
+    400054: charaA_off_footbone003
+    400056: charaA_off_footbone004
+    400058: charaA_off_footIK001
+    400060: charaA_off_footIK002
+    400062: charaA_off_footIKgoal001
+    400064: charaA_off_footIKgoal002
+    400066: charaA_off_headbone002
+    400068: charaA_off_hoho001
+    400070: charaA_off_hoho002
+    400072: charaA_off_koshi001
+    400074: charaA_rnd_arm
+    400076: charaA_rnd_arm001
+    400078: charaA_rnd_body
+    400080: charaA_rnd_foot
+    400082: charaA_rnd_foot001
+    400084: charaA_rnd_head
+    400086: charaA_rnd_heta01
+    400088: //RootNode
+    4300000: charaA_rnd_head
+    4300002: charaA_rnd_heta01
+    4300004: charaA_rnd_body
+    4300006: charaA_rnd_foot
+    4300008: charaA_rnd_arm
+    4300010: charaA_rnd_arm001
+    4300012: charaA_rnd_foot001
+    9500000: //RootNode
+    13700000: charaA_rnd_arm
+    13700002: charaA_rnd_arm001
+    13700004: charaA_rnd_body
+    13700006: charaA_rnd_foot
+    13700008: charaA_rnd_foot001
+    13700010: charaA_rnd_head
+    13700012: charaA_rnd_heta01
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

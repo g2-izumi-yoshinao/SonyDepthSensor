@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class testButton : MonoBehaviour {
-	
+
+	public GameObject cakePiecePref;
 	void Start () {
 		
 	}
@@ -19,5 +20,10 @@ public class testButton : MonoBehaviour {
 			SimpleCharacterController sp = s.GetComponentInChildren<SimpleCharacterController> (true);
 			sp.testSetProximity ();
 		}
+
+//		GameObject cakePirce = Instantiate (cakePiecePref, new Vector3(0,0,0), Quaternion.identity);
+//		Rigidbody cakeRig = cakePirce.GetComponent<Rigidbody> ();
+//		cakeRig.AddForce (new Vector3(0.0f,1.1f,0.1f), ForceMode.Impulse);
+//
 	}
 }

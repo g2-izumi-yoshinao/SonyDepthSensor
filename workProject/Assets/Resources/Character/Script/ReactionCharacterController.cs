@@ -41,6 +41,7 @@ public class ReactionCharacterController : MonoBehaviour {
 		none,
 		walking,
 		meetFirstSon,
+		meetFirstSonOver,
 		meetSecondSon,
 		meetThiredSon
 	}
@@ -146,9 +147,11 @@ public class ReactionCharacterController : MonoBehaviour {
 	private static string ANIM_BASE_LAYER ="Base Layer";
 	private static string ANIM_STANDING_LOOP = ANIM_BASE_LAYER+"."+"Standing@loop";
 	private static string ANIM_WALKING_LOOP = ANIM_BASE_LAYER+"."+"Walking@loop";
+	private static string ANIM_HEADROLL_ = ANIM_BASE_LAYER+"."+"headRoll";
 
 	private static string ANIM_TRIGGER_STANDING_NAME = "Standing";
 	private static string ANIM_TRIGGER_WALKING_NAME = "Walking";
+	private static string ANIM_TRIGGER_HEADROLL_NAME = "headRoll";
 
 	private string CheekStretchAnimationClipName="Stretch";//treat as speed 0 clip animation play
 
@@ -163,7 +166,6 @@ public class ReactionCharacterController : MonoBehaviour {
 	public Material material_texture2;
 	public Material material_greenM;
 	public Material material_hadaM;
-
 
 	private int moveframeCnt = 0;
 	private float sigWait = 1.0f;
@@ -230,6 +232,7 @@ public class ReactionCharacterController : MonoBehaviour {
 		if (loadFirst) {
 			loadFirst = false;
 			initPinchRelated ();
+			initWaste ();
 		}
 
 		if (fadeIn ()) {
@@ -972,7 +975,19 @@ public class ReactionCharacterController : MonoBehaviour {
 			groundActionState = groundBaseActionState;
 		} else {
 			groundActionState = state;
+			if (state == ActionOnGroundState.meetFirstSon) {
+				MeWaste waste= GetComponentInChildren<MeWaste> (true);
+				waste.doFadeIn ();
+			}else if (state == ActionOnGroundState.meetFirstSonOver) {
+				animator.SetTrigger (ANIM_TRIGGER_HEADROLL_NAME);
+			}
+
 		}
+	}
+
+	public void headRollDicTime(){
+		MeWaste waste = GetComponentInChildren<MeWaste> (true);
+		waste.doFadeOut ();
 	}
 
 	private void clearVelocityXZ(){
@@ -1045,5 +1060,9 @@ public class ReactionCharacterController : MonoBehaviour {
 
 		}
 	}
-
+		
+	void initWaste(){
+		MeWaste waste = GetComponentInChildren<MeWaste> (true);
+		waste.clean ();
+	}
 }

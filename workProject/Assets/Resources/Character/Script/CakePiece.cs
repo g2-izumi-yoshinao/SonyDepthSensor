@@ -13,17 +13,12 @@ using UnityEngine;
 
 public class CakePiece : MonoBehaviour {
 
-	private BoxCollider collier;
-	private Rigidbody rigid;
-
 	void Start () {
-		collier = GetComponent<BoxCollider> ();
-		collier.isTrigger = true;
-		rigid = GetComponent<Rigidbody> ();
-
 	}
 	void Update () {
-		
+		if (transform.position.y < -1.0f) {
+			Destroy (gameObject);
+		}
 	}
 
 

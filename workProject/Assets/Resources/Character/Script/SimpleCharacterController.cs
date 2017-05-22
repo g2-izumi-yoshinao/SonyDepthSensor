@@ -244,7 +244,7 @@ public class SimpleCharacterController : MonoBehaviour {
 				attachElapse += Time.deltaTime;
 				if (attachElapse > attackTimeOut) {
 					onProximity = false;
-					pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.none);
+					pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.meetFirstSonOver);
 				}
 			}
 		} else {
@@ -255,6 +255,7 @@ public class SimpleCharacterController : MonoBehaviour {
 						animator.SetTrigger (ANIM_TRIGGER_PASAPASA_NAME);
 					}
 				}
+				pasapasa ();
 				pasapasaElapse += Time.deltaTime;
 				if (pasapasaElapse > pasapasaTimeOut) {
 					onPasapasa = false;
@@ -557,6 +558,37 @@ public class SimpleCharacterController : MonoBehaviour {
 		}
 	}
 
+	private void pasapasa(){
+		for (int i = 0; i < 10; i++) {
+			float rx = UnityEngine.Random.value * CommonStatic.charaRateX;
+			float rz = UnityEngine.Random.value * CommonStatic.charaRateZ;
+
+			float ry = UnityEngine.Random.Range (0.8f, 1.2f);
+			Vector3 meDir = (pinchingCharacter.transform.position - transform.position).normalized;
+			Vector3 force = new Vector3 (meDir.x * rx*10f, ry, meDir.z * rz*10f);
+
+			GameObject cakePirce = Instantiate (cakePiecePref, transform.position, Quaternion.identity);
+			Rigidbody cakeRig = cakePirce.GetComponent<Rigidbody> ();
+			cakeRig.AddForce (force, ForceMode.Impulse);
+		}
+	}
+
+	private void firstSonAttack(){
+
+		for (int i = 0; i < 20; i++) {
+			float rx = UnityEngine.Random.value * CommonStatic.charaRateX;
+			float rz = UnityEngine.Random.value * CommonStatic.charaRateZ;
+
+			float ry = UnityEngine.Random.Range (0.8f, 1.2f);
+			Vector3 meDir = (pinchingCharacter.transform.position - transform.position).normalized;
+			Vector3 force = new Vector3 (meDir.x * rx*10f, ry, meDir.z * rz*10f);
+
+			GameObject cakePirce = Instantiate (cakePiecePref, transform.position, Quaternion.identity);
+			Rigidbody cakeRig = cakePirce.GetComponent<Rigidbody> ();
+			cakeRig.AddForce (force, ForceMode.Impulse);
+		}
+
+	}
 
 	private void secandSonThrowCakePiece(){
 		if (totalMaxCakePiceCnt > totalMaxCakePiceMaxCnt) {
@@ -651,6 +683,10 @@ public class SimpleCharacterController : MonoBehaviour {
 	}
 
 	public void OnPasaPasaAttackAnimationStartFlame(){
+		firstSonAttack ();
+	}
+
+	public void OnPasaPasaAttackAnimationThrowPointFlame(){
 	}
 
 	public void OnRunAnimationStartFlame(){
