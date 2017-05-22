@@ -58,6 +58,7 @@
      <Compile Include="Assets\Resources\Character\Work\testCap.cs" />
      <Compile Include="Assets\Resources\Character\Work\testChara.cs" />
      <Compile Include="Assets\Resources\Character\Work\testFinger.cs" />
+     <Compile Include="Assets\Resources\Character\Work\testLoader.cs" />
      <None Include="Assets\Resources\Character\Shader\groundShader.shader" />
      <None Include="Assets\Resources\Character\Shader\stealthShader.shader" />
  <Reference Include="UnityEngine.Advertisements">

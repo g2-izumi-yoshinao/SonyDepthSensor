@@ -43,6 +43,8 @@ public class SimpleCharacterController : MonoBehaviour {
 	private static string ANIM_RUNNING_LOOP = ANIM_BASE_LAYER+"."+"Running@loop";
 	private static string ANIM_HAVING_LOOP = ANIM_BASE_LAYER+"."+"Having@loop";
 	private static string ANIM_WOW_JUMP = ANIM_BASE_LAYER+"."+"JumpWow";
+	private static string ANIM_PASAPASA = ANIM_BASE_LAYER+"."+"PasaPasa";
+	private static string ANIM_PASAPASA_ATTACK = ANIM_BASE_LAYER+"."+"PasaPasaAttack";
 
 	private AnimatorStateInfo currentAnimationState;	
 	static int StandingState = Animator.StringToHash (ANIM_STANDING_LOOP);
@@ -50,17 +52,24 @@ public class SimpleCharacterController : MonoBehaviour {
 	static int RunningState = Animator.StringToHash (ANIM_RUNNING_LOOP);
 	static int HavingState = Animator.StringToHash (ANIM_HAVING_LOOP);
 	static int WowJumpState = Animator.StringToHash (ANIM_WOW_JUMP);
+	static int PasaPasaState = Animator.StringToHash (ANIM_PASAPASA);
+	static int PasaPasaAttackState = Animator.StringToHash (ANIM_PASAPASA_ATTACK);
 
 	private static string ANIM_TRIGGER_STANDING_NAME = "Standing";
 	private static string ANIM_TRIGGER_WALKING_NAME = "Walking";
 	private static string ANIM_TRIGGER_WOWJUMP_NAME = "WowJump";
 	private static string ANIM_TRIGGER_THROW_NAME = "Throw";
 	private static string ANIM_TRIGGER_HAVING_NAME = "Having";
-
+	private static string ANIM_TRIGGER_PASAPASA_NAME = "PasaPasa";
+	private static string ANIM_TRIGGER_PASAPASA_ATTACK_NAME = "PasaPasaAttack";
 
 	//common 
-	public GameObject AimTarget;// should set by initFirstSon. public is for first test
+	private Vector3 VirtualCameraPos;
+	private GameObject AimTarget;// should set by initFirstSon. public is for first test
+	private Vector3 AimTargetExecuteSize;//executed unity size
+	private bool onProximityPreset=false;
 	private bool onProximity=false;
+	private bool initProximity=false;
 
 	private float alphaVal=0.0f;
 	public Material material_texture1;//even model is in test state  
@@ -72,12 +81,14 @@ public class SimpleCharacterController : MonoBehaviour {
 	//for firstSon
 	private int moveframeCnt = 0;
 	private float sigWait = 1.0f;
-	private float forwardSpeed = 0.05f;
+	private float forwardSpeed;
 	private int ancflg=1;
-	private bool initAttack=false;
 	private float attachElapse;
 	private float attackTimeOut=3;//sec
-
+	private bool initPasapasa=false;
+	private float pasapasaElapse;
+	private float pasapasaTimeOut=2;//sec
+	private bool onPasapasa=false;
 
 	//for secondSon
 	enum secondSon_Action {
@@ -86,15 +97,17 @@ public class SimpleCharacterController : MonoBehaviour {
 	}
 
 	private float rndflg=1;
-	private float perRnd=3;
+	private float perRnd=1;//3
 	private bool initWalking=false;
 	private float currentRnd=0;
 	private const float oneTimeRnd=30;
 	private bool initHaving=false;
 	private float havingElapse;
-	private float havingTimeOut=3;//sec
+	private float havingTimeOut=4;//sec
 	private secondSon_Action secondsonActionState;
 	public GameObject cakePiecePref;
+	private Vector3 pieceMeshSize;
+
 	private float throwCakePieceElapse;
 	private float throwCakePieceEmit=10;
 	private float throwCakePieceCount=0;
@@ -106,7 +119,13 @@ public class SimpleCharacterController : MonoBehaviour {
 	private float armSinframeCnt;
 	private float armSignFreq = 12.0f;
 	private float bodySinframeCnt;
-	private float bodySignFreq = 4.0f;
+	private float bodySignFreq = 3.0f;
+	private bool onRunning=false;
+	private float perRndRote=3;
+	private int runLoopCnt=0;
+	private bool preHit=false;
+	private Collider targetCollider;
+	private int runLoopMaxCnt=6;
 
 	private AudioSource sound;
 	private Animator animator;
@@ -159,6 +178,14 @@ public class SimpleCharacterController : MonoBehaviour {
 
 		currentAnimationState = animator.GetCurrentAnimatorStateInfo (BodyAnimationLayor);
 
+		if (onProximityPreset) {
+			if (pinchingCharacter.isOnGround ()) {
+				onProximityPreset = false;
+				onProximity = true;
+				initProximity = true;
+			}
+		}
+			
 		if (acitonType == SimpleActinType.firstSon) {
 			firstSun_Update ();
 		} else if (acitonType == SimpleActinType.secondSon) {
@@ -188,21 +215,24 @@ public class SimpleCharacterController : MonoBehaviour {
 		if (loadFirst) {
 			loadFirst = false;
 			lookCamera ();
-
+			onPasapasa = false;
+			forwardSpeed = AimTargetExecuteSize.x / 10f;
 			if (currentAnimationState.fullPathHash == StandingState) {
-				Debug.Log ("");
+				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 			}
-
-			animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 		}
-	
 		//onProximity
 		if (onProximity) {
-			if (initAttack) {
-				initAttack = false;
+			if (initProximity) {
+				initProximity = false;
 				lookTarget ();
+				if (onPasapasa) {
+					onPasapasa = false;
+				}
 				attachElapse = 0;
 				throwCakePieceCount = 0;
+				pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.meetFirstSon);
+				animator.SetTrigger (ANIM_TRIGGER_PASAPASA_ATTACK_NAME);
 			}
 				//seek to
 			if (pinchingCharacter != null) {
@@ -218,12 +248,26 @@ public class SimpleCharacterController : MonoBehaviour {
 				}
 			}
 		} else {
-
+			if (onPasapasa) {
+				if (initPasapasa) {
+					initPasapasa = false;
+					if (currentAnimationState.fullPathHash == WalkingState) {
+						animator.SetTrigger (ANIM_TRIGGER_PASAPASA_NAME);
+					}
+				}
+				pasapasaElapse += Time.deltaTime;
+				if (pasapasaElapse > pasapasaTimeOut) {
+					onPasapasa = false;
+				} else {
+					return;
+				}
+			}
+				
 			if (currentAnimationState.fullPathHash != WalkingState) {
 				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 			}
 				
-			float arclength = AimTarget.transform.lossyScale.x / 2.0f;
+			float arclength = AimTargetExecuteSize.x/2.0f;
 
 			moveframeCnt += 1;
 			if (moveframeCnt > 10000) {
@@ -238,7 +282,7 @@ public class SimpleCharacterController : MonoBehaviour {
 			Vector3 footpos = new Vector3(transform.position.x,AimTarget.transform.position.y, transform.position.z);
 
 			float distCenter = (footpos - AimTarget.transform.position).magnitude;
-			if (distCenter > arclength*0.9) {
+			if (distCenter > arclength*0.8) {
 				Vector3 backDir=(AimTarget.transform.position - transform.position).normalized;
 				dx = backDir.x;
 				dz = backDir.z;
@@ -262,7 +306,6 @@ public class SimpleCharacterController : MonoBehaviour {
 			totalMaxCakePiceCnt = 0;
 			secondsonActionState = secondSon_Action.walking;
 			initWalking = true;
-
 		}
 
 		if (secondsonActionState == secondSon_Action.having) {
@@ -287,18 +330,14 @@ public class SimpleCharacterController : MonoBehaviour {
 				clearVelocityXZ ();
 				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 			}
-			if (!rotaionXYTaget ()) {
+			if (!spritRotaionXYTaget ()) {
 				initHaving = true;
 				secondsonActionState = secondSon_Action.having;
 			}
 		}
-
-
 	}
 
 	void secondSun_LateUpdate(){
-		
-
 	}
 
 
@@ -307,8 +346,47 @@ public class SimpleCharacterController : MonoBehaviour {
 		if (loadFirst) {
 			loadFirst = false;
 			lookCamera ();
+			Collider[] colliders=AimTarget.GetComponentsInChildren<Collider>(true);
+			foreach(Collider cl in colliders){
+				if (cl.gameObject.name=="mesh_cup_base") {
+					targetCollider = cl;
+					break;
+				}
+			}
 		}
 
+		if (onProximity) {
+			if (initProximity) {
+				initProximity = false;
+				runLoopCnt = 0;
+				preHit = false;
+				transform.rotation = Quaternion.identity;
+				Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
+					transform.position.y,
+					pinchingCharacter.transform.position.z);
+				transform.root.LookAt (targetDir);
+				animator.SetTrigger (ANIM_TRIGGER_WOWJUMP_NAME);
+			}
+
+			if (onRunning) {
+				rotaionXYTaget ();
+
+				Vector3 rayDir = (VirtualCameraPos - transform.position).normalized;
+				Ray ray = new Ray(transform.position,rayDir);
+				RaycastHit hit;
+				bool currenthit = (targetCollider.Raycast (ray, out hit, 5.0f));
+				if (preHit != currenthit) {
+					preHit = currenthit;
+					runLoopCnt++;
+					if (runLoopCnt > runLoopMaxCnt) {
+						if (!preHit) {
+							onRunning = false;
+							onProximity = false;
+						}
+					}
+				}
+			}
+		}
 
 		if (currentAnimationState.fullPathHash == RunningState) {
 			//びっくり後 移動処理 
@@ -321,15 +399,18 @@ public class SimpleCharacterController : MonoBehaviour {
 	void thirdSun_LateUpdate(){
 
 		//switch
-		swingBody();
-		swingArm ();
-
+		if (!onProximity) {
+			swingBody ();
+			swingArm ();
+		}
 	}
 
 
 	//=====================================================
-	public void initSon(GameObject aim){
+	public void initSon(GameObject aim, Vector3 executesize,Vector3 camerapos){
 		AimTarget = aim;
+		AimTargetExecuteSize = executesize;
+		VirtualCameraPos = camerapos;
 	}
 
 	private void commonInit(){
@@ -339,8 +420,8 @@ public class SimpleCharacterController : MonoBehaviour {
 	}
 
 	private void lookCamera(){
-		Vector3 cameraPos = GameObject.FindGameObjectWithTag ("MainCamera").transform.position;
-		Vector3 cameraX0Y = new Vector3 (cameraPos.x,0,cameraPos.z);
+		Vector3 cameraPos = VirtualCameraPos;
+		Vector3 cameraX0Y = new Vector3 (cameraPos.x,transform.position.y,cameraPos.z);
 
 		//とりあえず直向
 		transform.LookAt(cameraX0Y);
@@ -381,7 +462,7 @@ public class SimpleCharacterController : MonoBehaviour {
 	}
 
 
-	private bool rotaionXYTaget(){
+	private bool spritRotaionXYTaget(){
 
 		if (currentRnd <= 0) {
 			return false;
@@ -389,7 +470,9 @@ public class SimpleCharacterController : MonoBehaviour {
 		Vector3 currentPos = transform.position;
 		Vector3 nextPos = getRotationXYTragetPos (transform.position, rndflg*perRnd);
 
-		Vector3 rayDir = (GameObject.FindGameObjectWithTag ("MainCamera").transform.position - transform.position).normalized;
+		//Vector3 rayDir = (GameObject.FindGameObjectWithTag ("MainCamera").transform.position - transform.position).normalized;
+		Vector3 rayDir = (VirtualCameraPos - transform.position).normalized;
+
 		Ray ray = new Ray(transform.position,rayDir);
 		RaycastHit hit;
 		Collider col = AimTarget.GetComponent<Collider> ();
@@ -402,6 +485,17 @@ public class SimpleCharacterController : MonoBehaviour {
 		Vector3 movedir = (transform.position - currentPos).normalized;
 		transform.rotation = Quaternion.LookRotation(movedir);
 		return true;
+	}
+
+	private void rotaionXYTaget(){
+
+		Vector3 currentPos = transform.position;
+		Vector3 nextPos = getRotationXYTragetPos (transform.position, rndflg*perRndRote);
+		transform.position = nextPos;
+		currentRnd -= perRndRote;
+		Vector3 movedir = (transform.position - currentPos).normalized;
+		transform.rotation = Quaternion.LookRotation(movedir);
+
 	}
 		
 	private Vector3 getRotationXYTragetPos(Vector3 current,float eula){
@@ -438,21 +532,28 @@ public class SimpleCharacterController : MonoBehaviour {
 		}
 		//proximity-------
 		if (other.gameObject.tag == ReactionCharacterController.REACTINO_CHARACTER_TAG) {
-			 pinchingCharacter = other.gameObject.GetComponentInParent<ReactionCharacterController> ();
-			if (pinchingCharacter.isOnGround ()) {
-				if (acitonType == SimpleActinType.firstSon) {
-					onProximity = true;
-					initAttack = true;
-					pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.meetFirstSon);
+			pinchingCharacter = other.gameObject.GetComponentInParent<ReactionCharacterController> ();
+			onProximityPreset = true;
+
+				
+		} else if (other.gameObject.tag == CommonStatic.PASAPASA_TAG) {
+			if (!onProximity) {
+				if (!onPasapasa) {
+					onPasapasa = true;
+					initPasapasa = true;
+					pasapasaElapse = 0;
 				}
 			}
 		}
+
 	}
 
 	void OnTriggerExit(Collider other) {
 		// proximity-------
 		if (other.gameObject.tag == ReactionCharacterController.REACTINO_CHARACTER_TAG) {
 			pinchingCharacter = null;
+			onProximityPreset = false;
+			onProximity = false;
 		}
 	}
 
@@ -471,8 +572,8 @@ public class SimpleCharacterController : MonoBehaviour {
 		throwCakePieceCount++;
 		totalMaxCakePiceCnt++;
 
-		float rx = UnityEngine.Random.value;
-		float rz = UnityEngine.Random.value;
+		float rx = UnityEngine.Random.value*CommonStatic.charaRateX;
+		float rz = UnityEngine.Random.value*CommonStatic.charaRateZ;
 
 		Vector3 outDir = (transform.position - AimTarget.transform.position).normalized;
 		Vector3 putPos = new Vector3 (transform.position.x + outDir.x * rx, transform.position.y, transform.position.z + outDir.z*rz);
@@ -542,4 +643,29 @@ public class SimpleCharacterController : MonoBehaviour {
 
 		}
 	}
+
+
+//=====Animation Event ==============
+//for effect set
+	public void OnPasaPasaAnimationStartFlame(){
+	}
+
+	public void OnPasaPasaAttackAnimationStartFlame(){
+	}
+
+	public void OnRunAnimationStartFlame(){
+		onRunning = true;
+	}
+
+
+	//debug
+	public void testSetProximity(){
+		GameObject m =  GameObject.FindGameObjectWithTag ("me");
+		pinchingCharacter = m.GetComponentInChildren<ReactionCharacterController> (true);
+		onProximity = true;
+		initProximity = true;
+
+	}
 }
+
+

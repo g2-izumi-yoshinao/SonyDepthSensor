@@ -12,17 +12,39 @@ public class CommonStatic : MonoBehaviour {
 	public static string GROUND_TAG = "ground";
 	public static string CAKE_TAG = "cake";
 	public static string CAP_TAG = "cap";
+	public static string CAP_SURFACE_TAG = "capWaterSurface";
 	public static string SON_TAG = "son";
+	public static string PASAPASA_TAG = "pasapasa";
 
-	public static Vector3[] getSightEdgePoint(GameObject aimTarget){
+	//charactre poly to unity 1 float scale scae base
+	public static float charaRateX=0.04f;//scale1 as unity1
+	public static float charaRateY=0.05f;//scale1 as unity1
+	public static float charaRateZ=0.04f;//scale1 as unity1
 
-		Vector3 cameraPos = GameObject.FindGameObjectWithTag ("MainCamera").transform.position;
+//	//cake poly to unity float scale scae base
+//	public static double cakeRateXZ=0.1f;//scale1 as unity1
+//	public static double cakeRateY=0.03f;//scale1 as unity1
+//	//cap poly to unity float scale scae base
+//	public static double capRateXZ=0.13f;//scale1 as unity1
+//	public static double capRateY=0.05f;
+//	//ground poly to unity float scale scae base
+//	public static double groundRateXZ=1;//scale1 as unity1
+//	public static double groundRateY=1;//scale1 as unity1
+
+	//display scale
+	public static Vector3 outCamScaleCharacter =  new Vector3(1.5f,1.5f,1.6f);
+	public static Vector3 outCamScaleCap =  new Vector3(0.5f,0.71f,0.5f);
+	public static Vector3 outCamScaleGround =  new Vector3(1.5f,1f,1.5f);
+	public static Vector3 outCamScaleCake =  new Vector3(2f,2f,2f);
+
+	public static Vector3[] getSightEdgePoint(GameObject aimTarget,float aimRadius,Vector3 cameraPos){
+
+		//Vector3 cameraPos = GameObject.FindGameObjectWithTag ("MainCamera").transform.position;
 		Vector2 cameraXY = new Vector2 (cameraPos.x,cameraPos.z);
 		Vector2 aimTargetXY = new Vector2 (aimTarget.transform.position.x, aimTarget.transform.position.z);
 
 		Vector3 CamAimVec = (aimTargetXY - cameraXY);
 		float camAimLen = CamAimVec.magnitude;
-		float aimRadius = aimTarget.transform.lossyScale.x / 2.0f;
 
 		float cos_a = aimRadius / camAimLen;
 		float sin_ql = -cos_a; //sin(π-θ)=-cos(θ)

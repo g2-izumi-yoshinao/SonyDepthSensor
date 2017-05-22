@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class testButton : MonoBehaviour {
-
-	// Use this for initialization
+	
 	void Start () {
 		
 	}
@@ -14,7 +13,11 @@ public class testButton : MonoBehaviour {
 		
 	}
 
-	public void ClickExit () {
-		Application.Quit ();
+	public void ClickBtn () {
+		GameObject[] sons = GameObject.FindGameObjectsWithTag ("son");
+		foreach (GameObject s in sons) {
+			SimpleCharacterController sp = s.GetComponentInChildren<SimpleCharacterController> (true);
+			sp.testSetProximity ();
+		}
 	}
 }
