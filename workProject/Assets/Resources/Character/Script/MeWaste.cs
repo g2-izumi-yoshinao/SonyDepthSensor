@@ -31,7 +31,7 @@ public class MeWaste : MonoBehaviour {
 	}
 
 	public void doFadeOut(){
-		onFadeOut=false;
+		onFadeOut=true;
 	}
 
 	private bool fadeIn(){
@@ -56,6 +56,10 @@ public class MeWaste : MonoBehaviour {
 		return onProcess;
 	}
 
+	public void clean(){
+		setAlpha (0);
+	}
+
 	private void setAlpha(float alpha){
 
 		if (alpha == 1.0) {
@@ -64,13 +68,10 @@ public class MeWaste : MonoBehaviour {
 			CommonStatic.SetBlendMode(pasaMat,CommonStatic.blendMode.Opaque);
 
 		}else{
-			CommonStatic.SetBlendMode(pasaMat,CommonStatic.blendMode.Transparent);
+			CommonStatic.SetBlendMode(pasaMat,CommonStatic.blendMode.Cutout);
 			pasaMat.color 
 			= new Color (pasaMat.color.r, pasaMat.color.g, pasaMat.color.b, alpha);
 		}
 	}
-
-	public void clean(){
-		setAlpha (0);
-	}
+		
 }

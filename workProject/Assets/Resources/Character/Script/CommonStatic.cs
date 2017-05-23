@@ -37,6 +37,8 @@ public class CommonStatic : MonoBehaviour {
 	public static Vector3 outCamScaleGround =  new Vector3(1.5f,1f,1.5f);
 	public static Vector3 outCamScaleCake =  new Vector3(2f,2f,2f);
 
+	public static Vector3 outCamScaleKumamon =  new Vector3(0.7f,0.7f,0.5f);
+
 	public static Vector3[] getSightEdgePoint(GameObject aimTarget,float aimRadius,Vector3 cameraPos){
 
 		//Vector3 cameraPos = GameObject.FindGameObjectWithTag ("MainCamera").transform.position;
@@ -69,7 +71,8 @@ public class CommonStatic : MonoBehaviour {
 	public enum blendMode
 	{
 		Opaque,
-		Transparent
+		Transparent,
+		Cutout
 	}
 
 	public static void SetBlendMode(Material material, blendMode mode){
@@ -95,6 +98,16 @@ public class CommonStatic : MonoBehaviour {
 			material.DisableKeyword("_ALPHABLEND_ON");
 			material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
 			material.renderQueue = 3000;
+			break;
+		case blendMode.Cutout:
+			material.SetOverrideTag("RenderType", "TransparentCutout");
+			material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+			material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+			material.SetInt("_ZWrite", 1);
+			material.EnableKeyword("_ALPHATEST_ON");
+			material.DisableKeyword("_ALPHABLEND_ON");
+			material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+			material.renderQueue = 2450;
 			break;
 		}
 	}

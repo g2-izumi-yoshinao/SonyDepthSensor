@@ -48,9 +48,11 @@
   <ItemGroup>
      <Compile Include="Assets\Resources\Character\Script\AncherController.cs" />
      <Compile Include="Assets\Resources\Character\Script\CakePiece.cs" />
+     <Compile Include="Assets\Resources\Character\Script\CapController.cs" />
      <Compile Include="Assets\Resources\Character\Script\CommonStatic.cs" />
      <Compile Include="Assets\Resources\Character\Script\FaceCapture.cs" />
      <Compile Include="Assets\Resources\Character\Script\FxOnMe.cs" />
+     <Compile Include="Assets\Resources\Character\Script\KumamonController.cs" />
      <Compile Include="Assets\Resources\Character\Script\LoaderOutScene.cs" />
      <Compile Include="Assets\Resources\Character\Script\MeWaste.cs" />
      <Compile Include="Assets\Resources\Character\Script\ReactionCharacterController.cs" />

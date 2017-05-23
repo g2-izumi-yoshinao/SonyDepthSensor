@@ -1,22 +1,22 @@
 fileFormatVersion: 2
-guid: cb45e8dc7c8b8448aa88e2b417f0f163
-timeCreated: 1494567360
+guid: f524e4bc763484c14a2d54002f6dad3f
+timeCreated: 1495451548
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: Cylinder001
-    100002: Cylinder002
+    100000: ichigo_Red_body
+    100002: ichigo_Rnd_teta001
     100004: //RootNode
-    400000: Cylinder001
-    400002: Cylinder002
+    400000: ichigo_Red_body
+    400002: ichigo_Rnd_teta001
     400004: //RootNode
-    2300000: Cylinder001
-    2300002: Cylinder002
-    3300000: Cylinder001
-    3300002: Cylinder002
-    4300000: Cylinder001
-    4300002: Cylinder002
+    2300000: ichigo_Red_body
+    2300002: ichigo_Rnd_teta001
+    3300000: ichigo_Red_body
+    3300002: ichigo_Rnd_teta001
+    4300000: ichigo_Red_body
+    4300002: ichigo_Rnd_teta001
     9500000: //RootNode
   materials:
     importMaterials: 1

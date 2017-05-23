@@ -124,8 +124,9 @@ public class ReactionCharacterController : MonoBehaviour {
 	public  float maxCheekStretchLength = 3.0f; //center-cheek size
 
 	private float ancherBaseScal;
-	private float CheekStretchStartFrame = 102f;//current animation start stretch at 102 frame
-	private float CheekStretchFrameFullLen =   197f;
+	//cheek1
+	private float CheekStretchStartFrame = 0f;//current animation start stretch at 102 frame
+	private float CheekStretchFrameFullLen = 121;
 	private float CheekStretchFrameLen =   95f;
 	private float CheekStretchSizeRate=0.2f;//stretch size rate bwtween animation with hand distance
 
@@ -993,6 +994,10 @@ public class ReactionCharacterController : MonoBehaviour {
 	private void clearVelocityXZ(){
 		rigid.velocity = new Vector3 (0, rigid.velocity.y, 0);
 		rigid.angularVelocity = Vector3.zero;
+	}
+
+	public void startShow(){
+		fadeIn ();
 	}
 
 	private bool fadeIn(){

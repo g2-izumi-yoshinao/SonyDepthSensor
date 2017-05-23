@@ -26,7 +26,7 @@ public class LoaderOutScene : MonoBehaviour {
 	private bool loaded=false;
 
 	//sencor value estimage 
-	private float groundy=-0.3f;
+	private float groundy=-0.2f;
 	private float scaleCharacter = 1.5f;//may required caluc self in relation with cake scale or some
 	private Vector3 postionMainCamera = new Vector3(0f,0,0f);
 	private Vector2 postionGroundCenterXY = new Vector2(0f,-1.5f);
@@ -76,6 +76,7 @@ public class LoaderOutScene : MonoBehaviour {
 				Vector3 postionCake = new Vector3 (postionCakeCenterXY.x, groundy+cakeExecuteSize.z/2.0f, postionCakeCenterXY.y);
 				cakeObj.transform.position = postionCake;
 	
+
 				//double capSizeY=CommonStatic.capRateY * CommonStatic.outCamScaleCap.y;
 				capObj = Instantiate (capPrefab, new Vector3(0,0,0), Quaternion.identity);
 				capObj.transform.localScale =  CommonStatic.outCamScaleCap;
@@ -83,7 +84,7 @@ public class LoaderOutScene : MonoBehaviour {
 				MeshFilter[] capmeshed=capObj.GetComponentsInChildren<MeshFilter>(true);
 				foreach(MeshFilter mf in capmeshed){
 					if (mf.name == "mesh_cup_base") {
-						meshSize  = capmeshed [0].mesh.bounds.size;
+						meshSize  = mf.mesh.bounds.size;
 						break;
 					}
 				}
@@ -152,23 +153,31 @@ public class LoaderOutScene : MonoBehaviour {
 				sonObjs [1].initSon (cakeObj,cakeExecuteSize,VirtualCameraPos);
 				sonObjs [2].initSon (capObj,capExecuteSize,VirtualCameraPos);
 			
-				foreach(SimpleCharacterController mb in sonObjs){
-					mb.setAction (true);
-				}
-
-				//debug----
-				Vector3 meStartPos = new Vector3 (0,
-					groundy + CommonStatic.charaRateY / 2f,-1.2f);
-				GameObject me=Instantiate(mePrefab,meStartPos, Quaternion.identity);
-				me.transform.localScale = new Vector3(scaleCharacter, scaleCharacter, scaleCharacter);
-				meObj = me.GetComponentInChildren<ReactionCharacterController> (true);
-				meObj.setAction (true);
-
-				ReactionCharacterController rc = meObj.GetComponentInChildren<ReactionCharacterController> (true);
-				rc.stableType = true;
-
+				startScene ();
 			}
 		}
+	}
+
+	private void startScene(){
+
+		foreach(SimpleCharacterController mb in sonObjs){
+			mb.setAction (true);
+			mb.doFadeIn ();
+		}
+			
+		CapController cap = capObj.GetComponentInChildren<CapController> (true);
+		cap.showKumamon ();
+
+		//debug----
+		Vector3 meStartPos = new Vector3 (0,
+			groundy + CommonStatic.charaRateY / 2f,-1.2f);
+		GameObject me=Instantiate(mePrefab,meStartPos, Quaternion.identity);
+		me.transform.localScale = new Vector3(scaleCharacter, scaleCharacter, scaleCharacter);
+		meObj = me.GetComponentInChildren<ReactionCharacterController> (true);
+		meObj.setAction (true);
+
+		ReactionCharacterController rc = meObj.GetComponentInChildren<ReactionCharacterController> (true);
+		rc.stableType = true;
 
 	}
 

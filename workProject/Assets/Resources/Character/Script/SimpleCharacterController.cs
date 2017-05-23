@@ -45,6 +45,8 @@ public class SimpleCharacterController : MonoBehaviour {
 	private static string ANIM_WOW_JUMP = ANIM_BASE_LAYER+"."+"JumpWow";
 	private static string ANIM_PASAPASA = ANIM_BASE_LAYER+"."+"PasaPasa";
 	private static string ANIM_PASAPASA_ATTACK = ANIM_BASE_LAYER+"."+"PasaPasaAttack";
+	private static string ANIM_HEAD_ROLL = ANIM_BASE_LAYER+"."+"headRoll";
+	private static string ANIM_SITTING = ANIM_BASE_LAYER+"."+"Sitting";
 
 	private AnimatorStateInfo currentAnimationState;	
 	static int StandingState = Animator.StringToHash (ANIM_STANDING_LOOP);
@@ -54,6 +56,9 @@ public class SimpleCharacterController : MonoBehaviour {
 	static int WowJumpState = Animator.StringToHash (ANIM_WOW_JUMP);
 	static int PasaPasaState = Animator.StringToHash (ANIM_PASAPASA);
 	static int PasaPasaAttackState = Animator.StringToHash (ANIM_PASAPASA_ATTACK);
+	static int HeadRollState = Animator.StringToHash (ANIM_HEAD_ROLL);
+	static int SittingState = Animator.StringToHash (ANIM_SITTING);
+
 
 	private static string ANIM_TRIGGER_STANDING_NAME = "Standing";
 	private static string ANIM_TRIGGER_WALKING_NAME = "Walking";
@@ -62,20 +67,25 @@ public class SimpleCharacterController : MonoBehaviour {
 	private static string ANIM_TRIGGER_HAVING_NAME = "Having";
 	private static string ANIM_TRIGGER_PASAPASA_NAME = "PasaPasa";
 	private static string ANIM_TRIGGER_PASAPASA_ATTACK_NAME = "PasaPasaAttack";
-
+	private static string ANIM_TRIGGER_HEAD_ROLL_NAME = "headRoll";
+	private static string ANIM_TRIGGER_SITTING_NAME = "Sitting";
 	//common 
+
 	private Vector3 VirtualCameraPos;
 	private GameObject AimTarget;// should set by initFirstSon. public is for first test
 	private Vector3 AimTargetExecuteSize;//executed unity size
 	private bool onProximityPreset=false;
 	private bool onProximity=false;
 	private bool initProximity=false;
+	private bool onPointState=false;
+	private bool onPointStateInit=false;
 
 	private float alphaVal=0.0f;
 	public Material material_texture1;//even model is in test state  
 	public Material material_texture2;
 	public Material material_greenM;
 	public Material material_hadaM;
+	private bool onFadeIn=false;
 
 
 	//for firstSon
@@ -89,6 +99,17 @@ public class SimpleCharacterController : MonoBehaviour {
 	private float pasapasaElapse;
 	private float pasapasaTimeOut=2;//sec
 	private bool onPasapasa=false;
+	private bool onMorphingInState=false;
+	private bool onMorphingWaitState=false;
+	private bool onMorphingOutState=false;
+	public  GameObject smokeEffect=null;
+	public  GameObject ichigoPref;
+	private float alphaValIchigo=0.0f;
+	public Material ichigoMesh;
+	public GameObject ichigoObj;
+	private float morphElapse;
+	private float morphTimeOut=6;//sec
+
 
 	//for secondSon
 	enum secondSon_Action {
@@ -140,7 +161,11 @@ public class SimpleCharacterController : MonoBehaviour {
 		animator = GetComponent<Animator>();
 		rigid = GetComponent<Rigidbody> ();
 		sound = GetComponent<AudioSource> ();
-		
+
+		if (smokeEffect != null) {
+			smokeEffect.SetActive (false);
+		}
+
 		if (ActionTypeInt == 1) {
 			acitonType = SimpleActinType.firstSon;
 		} else if (ActionTypeInt == 2) {
@@ -148,6 +173,8 @@ public class SimpleCharacterController : MonoBehaviour {
 		} else {
 			acitonType = SimpleActinType.thirdSon;
 		}
+
+		setAlpha (0);
 	}
 
 	public void setAction(bool active){
@@ -177,6 +204,15 @@ public class SimpleCharacterController : MonoBehaviour {
 		rigid.isKinematic = false;
 
 		currentAnimationState = animator.GetCurrentAnimatorStateInfo (BodyAnimationLayor);
+
+		if (onFadeIn) {
+			if (fadeIn ()) {
+				return;
+			} else {
+				onFadeIn = false;
+			}
+		}
+
 
 		if (onProximityPreset) {
 			if (pinchingCharacter.isOnGround ()) {
@@ -221,6 +257,48 @@ public class SimpleCharacterController : MonoBehaviour {
 				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 			}
 		}
+
+		if (onPointState) {
+			if (onPointStateInit) {
+				onPointStateInit = false;
+				onMorphingInState = false;
+				onMorphingWaitState = false;
+				onMorphingOutState = false;
+				morphElapse = 0;
+				ichigoObj = Instantiate (ichigoPref, transform.position, ichigoPref.transform.rotation);
+				cleraIchigo ();
+				animator.SetTrigger (ANIM_TRIGGER_SITTING_NAME);
+			} else {
+				if (onMorphingInState) {
+					if (fadeOut ()||fadeInIchigo ()) {
+					} else {
+						onMorphingInState = false;
+						onMorphingWaitState = true;
+					}
+				} else if (onMorphingWaitState) {
+					morphElapse += Time.deltaTime;
+					if (morphElapse > morphTimeOut) {
+						onMorphingWaitState = false;
+						onMorphingOutState = true;
+						smokeEffect.SetActive (false);
+						smokeEffect.SetActive (true);
+					}
+				} else if(onMorphingOutState) {
+					if (fadeIn ()||fadeOutIchigo ()){
+					} else {
+						Destroy (ichigoObj);
+						smokeEffect.SetActive (false);
+						onMorphingOutState = false;
+						onPointState = false;
+						animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
+					}	
+				} else {
+					return;
+				}
+			}
+			return;
+		}
+
 		//onProximity
 		if (onProximity) {
 			if (initProximity) {
@@ -255,7 +333,6 @@ public class SimpleCharacterController : MonoBehaviour {
 						animator.SetTrigger (ANIM_TRIGGER_PASAPASA_NAME);
 					}
 				}
-				pasapasa ();
 				pasapasaElapse += Time.deltaTime;
 				if (pasapasaElapse > pasapasaTimeOut) {
 					onPasapasa = false;
@@ -309,6 +386,14 @@ public class SimpleCharacterController : MonoBehaviour {
 			initWalking = true;
 		}
 
+		if (onPointState) {
+			if (onPointStateInit) {
+				onPointStateInit = false;
+				animator.SetTrigger (ANIM_TRIGGER_HEAD_ROLL_NAME);
+			}
+			return;
+		}
+
 		if (secondsonActionState == secondSon_Action.having) {
 			if (initHaving) {
 				initHaving = false;
@@ -356,16 +441,26 @@ public class SimpleCharacterController : MonoBehaviour {
 			}
 		}
 
+		if (onPointState) {
+			if (onPointStateInit) {
+				onPointStateInit = false;
+				onProximity = true;
+				initProximity = true;
+			}
+		}
+
 		if (onProximity) {
 			if (initProximity) {
 				initProximity = false;
 				runLoopCnt = 0;
 				preHit = false;
 				transform.rotation = Quaternion.identity;
-				Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
-					transform.position.y,
-					pinchingCharacter.transform.position.z);
-				transform.root.LookAt (targetDir);
+				if (pinchingCharacter != null) {
+					Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
+						                   transform.position.y,
+						                   pinchingCharacter.transform.position.z);
+					transform.root.LookAt (targetDir);
+				}
 				animator.SetTrigger (ANIM_TRIGGER_WOWJUMP_NAME);
 			}
 
@@ -383,6 +478,7 @@ public class SimpleCharacterController : MonoBehaviour {
 						if (!preHit) {
 							onRunning = false;
 							onProximity = false;
+							onPointState = false;
 						}
 					}
 				}
@@ -415,6 +511,8 @@ public class SimpleCharacterController : MonoBehaviour {
 	}
 
 	private void commonInit(){
+		onPointStateInit = false;
+		onPointState = false;
 		leftArmStartlocalDir = bone_Character1_LeftArm.InverseTransformPoint (bone_Character1_LeftForeArm.position).normalized;
 		rightArmStartlocalDir = bone_Character1_RightArm.InverseTransformPoint (bone_Character1_RightForeArm.position).normalized;
 
@@ -516,15 +614,10 @@ public class SimpleCharacterController : MonoBehaviour {
 
 	//=====================================================
 	public void onPoint(){
-
-		if (acitonType == SimpleActinType.firstSon) {
-			
-		} else if (acitonType == SimpleActinType.secondSon) {
-			
-		} else if (acitonType == SimpleActinType.thirdSon) {
-			animator.SetTrigger (ANIM_TRIGGER_WOWJUMP_NAME);
+		if (!onPointState) {
+			onPointStateInit = true;
+			onPointState = true;
 		}
-
 	}
 		
 	void OnTriggerEnter(Collider other) {
@@ -562,11 +655,10 @@ public class SimpleCharacterController : MonoBehaviour {
 		for (int i = 0; i < 10; i++) {
 			float rx = UnityEngine.Random.value * CommonStatic.charaRateX;
 			float rz = UnityEngine.Random.value * CommonStatic.charaRateZ;
-
 			float ry = UnityEngine.Random.Range (0.8f, 1.2f);
-			Vector3 meDir = (pinchingCharacter.transform.position - transform.position).normalized;
-			Vector3 force = new Vector3 (meDir.x * rx*10f, ry, meDir.z * rz*10f);
-
+			float angleDir = transform.eulerAngles.y * (Mathf.PI / 180.0f);
+			Vector3 dir = new Vector3 (Mathf.Cos (angleDir), Mathf.Sin (angleDir), 0.0f);
+			Vector3 force = new Vector3 (dir.x * rx * 8.0f, ry, dir.z * rz * 8.0f);
 			GameObject cakePirce = Instantiate (cakePiecePref, transform.position, Quaternion.identity);
 			Rigidbody cakeRig = cakePirce.GetComponent<Rigidbody> ();
 			cakeRig.AddForce (force, ForceMode.Impulse);
@@ -581,7 +673,7 @@ public class SimpleCharacterController : MonoBehaviour {
 
 			float ry = UnityEngine.Random.Range (0.8f, 1.2f);
 			Vector3 meDir = (pinchingCharacter.transform.position - transform.position).normalized;
-			Vector3 force = new Vector3 (meDir.x * rx*10f, ry, meDir.z * rz*10f);
+			Vector3 force = new Vector3 (meDir.x * rx*8.0f, ry, meDir.z * rz*8.0f);
 
 			GameObject cakePirce = Instantiate (cakePiecePref, transform.position, Quaternion.identity);
 			Rigidbody cakeRig = cakePirce.GetComponent<Rigidbody> ();
@@ -618,6 +710,10 @@ public class SimpleCharacterController : MonoBehaviour {
 		rigid.angularVelocity = Vector3.zero;
 	}
 
+	public void doFadeIn(){
+		onFadeIn = true;
+	}
+
 	private bool fadeIn(){
 		bool onProcess = true;
 		alphaVal += Time.deltaTime;
@@ -639,7 +735,7 @@ public class SimpleCharacterController : MonoBehaviour {
 		setAlpha (alphaVal);
 		return onProcess;
 	}
-
+		
 	private void setAlpha(float alpha){
 
 		if (alpha == 1.0) {
@@ -657,6 +753,21 @@ public class SimpleCharacterController : MonoBehaviour {
 			CommonStatic.SetBlendMode(material_texture2,CommonStatic.blendMode.Opaque);
 			CommonStatic.SetBlendMode(material_greenM,CommonStatic.blendMode.Opaque);
 			CommonStatic.SetBlendMode(material_hadaM,CommonStatic.blendMode.Opaque);
+
+		}else if (alpha == 0.0){
+			CommonStatic.SetBlendMode(material_texture1,CommonStatic.blendMode.Cutout);
+			CommonStatic.SetBlendMode(material_texture2,CommonStatic.blendMode.Cutout);
+			CommonStatic.SetBlendMode(material_greenM,CommonStatic.blendMode.Cutout);
+			CommonStatic.SetBlendMode(material_hadaM,CommonStatic.blendMode.Cutout);
+
+			material_texture1.color 
+			= new Color (material_texture1.color.r, material_texture1.color.g, material_texture1.color.b, alpha);
+			material_texture2.color 
+			= new Color (material_texture2.color.r, material_texture2.color.g, material_texture2.color.b, alpha);
+			material_greenM.color 
+			= new Color (material_greenM.color.r, material_greenM.color.g, material_greenM.color.b, alpha);
+			material_hadaM.color 
+			= new Color (material_hadaM.color.r, material_hadaM.color.g, material_hadaM.color.b, alpha);
 
 		}else{
 			CommonStatic.SetBlendMode(material_texture1,CommonStatic.blendMode.Transparent);
@@ -676,10 +787,60 @@ public class SimpleCharacterController : MonoBehaviour {
 		}
 	}
 
+	private bool fadeInIchigo(){
+		bool onProcess = true;
+		alphaValIchigo += Time.deltaTime;
+		if (alphaValIchigo >= 1.0f) {
+			alphaValIchigo = 1.0f;
+			onProcess = false;
+		}
+		setIchigoAlpha (alphaValIchigo);
+		return onProcess;
+	}
+
+	private bool fadeOutIchigo(){
+		bool onProcess = true;
+		alphaValIchigo -= Time.deltaTime;
+		if (alphaValIchigo < 0.0f) {
+			alphaValIchigo = 0.0f;
+			onProcess = false;
+		}
+		setIchigoAlpha (alphaValIchigo);
+		return onProcess;
+	}
+
+	private void cleraIchigo(){
+		setIchigoAlpha (0);
+	}
+
+	private void setIchigoAlpha(float alpha){
+
+		if (alpha == 1.0) {
+
+			ichigoMesh.color 
+			= new Color (ichigoMesh.color.r, ichigoMesh.color.g, ichigoMesh.color.b, alpha);
+
+			CommonStatic.SetBlendMode(ichigoMesh,CommonStatic.blendMode.Opaque);
+
+		}else if (alpha == 0.0){
+			CommonStatic.SetBlendMode(ichigoMesh,CommonStatic.blendMode.Cutout);
+
+			ichigoMesh.color 
+			= new Color (ichigoMesh.color.r, ichigoMesh.color.g, ichigoMesh.color.b, alpha);
+
+		}else{
+			CommonStatic.SetBlendMode(ichigoMesh,CommonStatic.blendMode.Transparent);
+
+			ichigoMesh.color 
+			= new Color (ichigoMesh.color.r, ichigoMesh.color.g, ichigoMesh.color.b, alpha);
+
+		}
+	}
 
 //=====Animation Event ==============
 //for effect set
 	public void OnPasaPasaAnimationStartFlame(){
+		pasapasa ();
 	}
 
 	public void OnPasaPasaAttackAnimationStartFlame(){
@@ -693,6 +854,16 @@ public class SimpleCharacterController : MonoBehaviour {
 		onRunning = true;
 	}
 
+	public void OnHeadrollEndFlame(){
+		if (acitonType == SimpleActinType.secondSon) {
+			onPointState = false;
+		}
+	}
+
+	public void OnSquadtoMorphFlame(){
+		smokeEffect.SetActive (true);
+		onMorphingInState = true;
+	}
 
 	//debug
 	public void testSetProximity(){

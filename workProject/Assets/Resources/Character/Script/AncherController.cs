@@ -49,6 +49,10 @@ public class AncherController : MonoBehaviour {
 			SimpleCharacterController simpleCharacter= other.gameObject.GetComponentInParent<SimpleCharacterController> ();
 			simpleCharacter.onPoint ();
 		}
+		if (other.gameObject.tag == KumamonController.KUMAMON_TAG) {
+			KumamonController kumamonCharacter= other.gameObject.GetComponentInParent<KumamonController> ();
+			kumamonCharacter.onPoint ();
+		}
 	}
 
 	void OnTriggerExit(Collider other) {
