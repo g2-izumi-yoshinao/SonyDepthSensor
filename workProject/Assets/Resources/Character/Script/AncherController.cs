@@ -45,8 +45,8 @@ public class AncherController : MonoBehaviour {
 				pinchingCharacter = other.gameObject.GetComponentInParent<ReactionCharacterController> ();
 			}
 		} 
-		if (other.gameObject.tag == SimpleCharacterController.POINT_POINT_TAG) {
-			SimpleCharacterController simpleCharacter= other.gameObject.GetComponentInParent<SimpleCharacterController> ();
+		if (other.gameObject.tag == SimpleController.POINT_POINT_TAG) {
+			SimpleController simpleCharacter= other.gameObject.GetComponentInParent<SimpleController> ();
 			simpleCharacter.onPoint ();
 		}
 		if (other.gameObject.tag == KumamonController.KUMAMON_TAG) {

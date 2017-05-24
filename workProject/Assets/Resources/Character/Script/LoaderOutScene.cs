@@ -11,13 +11,15 @@ using UnityEngine;
 public class LoaderOutScene : MonoBehaviour {
 
 	public GameObject mePrefab;
-	public GameObject[] sonPrefabs;
+	public ChonanController chonan;
+	public JinanController jinan;
+	public SannanController sannnan;
 	public GameObject groundPrefab;
 	public GameObject cakePrefab;
 	public GameObject capPrefab;
 
 	private ReactionCharacterController meObj;
-	private SimpleCharacterController[] sonObjs;
+	private SimpleController[] sonObjs;
 	private GameObject groundObj;
 	private GameObject cakeObj;
 	private GameObject capObj;
@@ -102,10 +104,9 @@ public class LoaderOutScene : MonoBehaviour {
 				//Vector3 VirtualCameraPos = cameraPos;
 
 			    //sons
-				GameObject son;
 				Vector3[] edges;
 				int randomVal;
-				sonObjs = new SimpleCharacterController[3];
+				sonObjs = new SimpleController[3];
 	
 				//first son 
 				Vector3 firstSonStartPos = new Vector3 (
@@ -113,9 +114,9 @@ public class LoaderOutScene : MonoBehaviour {
 					cakeObj.transform.position.y+cakeExecuteSize.z/2.0f + CommonStatic.charaRateY/2f,
 					cakeObj.transform.position.z);
 				
-				son = Instantiate (sonPrefabs [0], firstSonStartPos, Quaternion.identity);
-				son.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
-				sonObjs [0] = son.GetComponentInChildren<SimpleCharacterController> (true);
+				ChonanController chonanObj = Instantiate (chonan, firstSonStartPos, Quaternion.identity);
+				chonanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
+				sonObjs [0] = chonanObj.GetComponentInChildren<SimpleController> (true);
 			
 				//second son
 				edges= CommonStatic.getSightEdgePoint (cakeObj,cakeExecuteSize.x/2.0f,VirtualCameraPos);
@@ -130,12 +131,12 @@ public class LoaderOutScene : MonoBehaviour {
 					secondSonStartPos=edges [1];
 				}
 				secondSonStartPos.y = groundy+CommonStatic.charaRateY / 2f;
-				son = Instantiate (sonPrefabs [1], secondSonStartPos, Quaternion.identity);
-				son.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
-				sonObjs [1] = son.GetComponentInChildren<SimpleCharacterController> (true);
+				JinanController jinanObj = Instantiate (jinan, secondSonStartPos, Quaternion.identity);
+				jinanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
+				sonObjs [1] = jinanObj.GetComponentInChildren<SimpleController> (true);
 				float sideSpan = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y)/2 ;
 				int flg = onleft ? 1 : -1;
-				son.transform.position += new Vector3 (flg*sideSpan, 0,0);
+				jinanObj.transform.position += new Vector3 (flg*sideSpan, 0,0);
 
 				//third son
 				edges= CommonStatic.getSightEdgePoint (capObj,capExecuteSize.x/2.0f,VirtualCameraPos);
@@ -144,9 +145,9 @@ public class LoaderOutScene : MonoBehaviour {
 				float hideback = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y);
 				Vector3 thirdSonStartPos = new Vector3 (edgepos.x, 
 					groundy+CommonStatic.charaRateY / 2f, edgepos.z + hideback);
-				son = Instantiate (sonPrefabs [2], thirdSonStartPos, Quaternion.identity);
-				son.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
-				sonObjs [2] = son.GetComponentInChildren<SimpleCharacterController> (true);
+				SannanController sannanObj = Instantiate (sannnan, thirdSonStartPos, Quaternion.identity);
+				sannanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
+				sonObjs [2] = sannanObj.GetComponentInChildren<SimpleController> (true);
 
 				//---init ---
 				sonObjs [0].initSon (cakeObj,cakeExecuteSize,VirtualCameraPos);
@@ -160,7 +161,7 @@ public class LoaderOutScene : MonoBehaviour {
 
 	private void startScene(){
 
-		foreach(SimpleCharacterController mb in sonObjs){
+		foreach(SimpleController mb in sonObjs){
 			mb.setAction (true);
 			mb.doFadeIn ();
 		}
@@ -186,7 +187,7 @@ public class LoaderOutScene : MonoBehaviour {
 		meObj.clear ();
 		meObj = null;
 
-		foreach(SimpleCharacterController sn in sonObjs){
+		foreach(SimpleController sn in sonObjs){
 			sn.clear();
 		}
 		sonObjs = null;
