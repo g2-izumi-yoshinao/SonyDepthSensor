@@ -4,19 +4,10 @@ using UnityEngine;
 
 public class SannanController : SimpleController {
 
-	public Transform bone_Character1_LeftArm;
-	public Transform bone_Character1_LeftForeArm;
-	public Transform bone_Character1_RightArm;
-	public Transform bone_Character1_RightForeArm;
-
 	private static string ANIM_TRIGGER_WOWJUMP_NAME = "WowJump";
-
-
-	//for thirdSon
-	private float armSinframeCnt;
-	private float armSignFreq = 12.0f;
-	private float bodySinframeCnt;
+		private float bodySinframeCnt;
 	private float bodySignFreq = 3.0f;
+
 	private bool onRunning=false;
 	private float perRndRote=3;
 	private int runLoopCnt=0;
@@ -95,13 +86,12 @@ public class SannanController : SimpleController {
 	}
 
 	protected override void onLateUpdate(){
-		if ((!onProximity)&&(!onRunning)) {
-			swingBody ();
-			swingArm ();
+		if ((!onProximity)&&(!onPointState)){
+			swing ();
 		}
 	}
-
-	private bool swingBody(){
+		
+	private bool swing(){
 
 		float signAmp = Mathf.Sin ((float)(2.0f * Mathf.PI * bodySignFreq * (bodySinframeCnt++ % 200) / 199.0f));
 		if (bodySinframeCnt > 10000) {
@@ -110,20 +100,7 @@ public class SannanController : SimpleController {
 		Quaternion bodyQ = Quaternion.AngleAxis (54f*signAmp, new Vector3 (0, 0, 1));
 		transform.rotation = bodyQ;
 		return true;
-	}
 
-
-	private bool swingArm(){
-
-		float signAmp = Mathf.Sin ((float)(2.0f * Mathf.PI * armSignFreq * (armSinframeCnt++ % 200) / 199.0f));
-		if (armSinframeCnt > 10000) {
-			armSinframeCnt = 0;
-		}
-		Quaternion handLeftQue = Quaternion.AngleAxis (54f*signAmp, new Vector3 (0, 1, 0));
-		Quaternion handRightQue = Quaternion.AngleAxis (-54f*signAmp, new Vector3 (0, 1, 0));
-		bone_Character1_LeftArm.localRotation = handLeftQue;
-		bone_Character1_RightArm.localRotation = handRightQue;
-		return true;
 	}
 
 	private void rotaionXYTaget(){
@@ -137,10 +114,10 @@ public class SannanController : SimpleController {
 	}
 
 	public void OnJumpEndFlame(){
-		//Debug.Log ("OnJumpEndStartFlame");
+		Debug.Log ("OnJumpEndStartFlame");
 	}
 	public void OnRunAnimationStartFlame(){
-		//Debug.Log ("OnRunAnimationStartFlame");
+		Debug.Log ("OnRunAnimationStartFlame");
 		onRunning = true;
 	}
 
