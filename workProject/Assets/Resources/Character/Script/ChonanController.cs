@@ -274,6 +274,9 @@ public class ChonanController : SimpleController {
 
 	public void OnPasaPasaAnimationThrowFlame(){
 		Debug.Log ("OnPasaPasaAnimationStartFlame");
+		if ((onMorphingInState)|| (onMorphingWaitState)||(onMorphingOutState)){
+			return;
+		}
 		pasaEffect.SetActive (true);
 		pasapasa ();
 	}
@@ -288,6 +291,9 @@ public class ChonanController : SimpleController {
 
 	public void OnPasaPasaAttackAnimationThrowPointFlame(){
 		//Debug.Log ("OnPasaPasaAttackAnimationThrowPointFlame");
+		if ((onMorphingInState)|| (onMorphingWaitState)||(onMorphingOutState)){
+			return;
+		}
 		pasaEffect.SetActive (true);
 		firstSonAttack ();
 	}

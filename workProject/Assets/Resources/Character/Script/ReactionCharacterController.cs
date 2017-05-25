@@ -193,7 +193,6 @@ public class ReactionCharacterController : MonoBehaviour {
 		if (loadFirst) {
 			loadFirst = false;
 			initPinchRelated ();
-			initWaste ();
 		}
 
 		if (fadeIn ()) {
@@ -684,8 +683,6 @@ public class ReactionCharacterController : MonoBehaviour {
 		} else {
 			groundActionState = state;
 			if (state == ActionOnGroundState.meetFirstSon) {
-				MeWaste waste= GetComponentInChildren<MeWaste> (true);
-				waste.doFadeIn ();
 			}else if (state == ActionOnGroundState.meetFirstSonOver) {
 				animator.SetTrigger (ANIM_TRIGGER_HEADROLL_NAME);
 			}
@@ -694,8 +691,6 @@ public class ReactionCharacterController : MonoBehaviour {
 	}
 
 	public void headRollDicTime(){
-		MeWaste waste = GetComponentInChildren<MeWaste> (true);
-		waste.doFadeOut ();
 	}
 
 	private void clearVelocityXZ(){
@@ -771,10 +766,5 @@ public class ReactionCharacterController : MonoBehaviour {
 				= new Color (material_hadaM.color.r, material_hadaM.color.g, material_hadaM.color.b, alpha);
 
 		}
-	}
-		
-	void initWaste(){
-		MeWaste waste = GetComponentInChildren<MeWaste> (true);
-		waste.clean ();
 	}
 }
