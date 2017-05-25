@@ -114,10 +114,10 @@ public class SannanController : SimpleController {
 	}
 
 	public void OnJumpEndFlame(){
-		Debug.Log ("OnJumpEndStartFlame");
+		//Debug.Log ("OnJumpEndStartFlame");
 	}
 	public void OnRunAnimationStartFlame(){
-		Debug.Log ("OnRunAnimationStartFlame");
+		//Debug.Log ("OnRunAnimationStartFlame");
 		onRunning = true;
 	}
 

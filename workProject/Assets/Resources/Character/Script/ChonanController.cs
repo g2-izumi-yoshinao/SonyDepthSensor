@@ -30,6 +30,8 @@ public class ChonanController : SimpleController {
 	private float morphElapse;
 	private float morphTimeOut=6;//sec
 
+	private GameObject cakePirceObj;
+	private float scalePasaPasaForceModify=0.3f;
 
 
 	protected override void onStart(){
@@ -224,38 +226,26 @@ public class ChonanController : SimpleController {
 		}
 	}
 
+	private void pasapasaPreset(){
+		Vector3 frontPos = transform.FindChild ("frontPoint").position;
+		cakePirceObj = Instantiate (cakePiecePref, frontPos, Quaternion.identity);
+	}
+
 	private void pasapasa(){
-		for (int i = 0; i < 10; i++) {
-			float rx = UnityEngine.Random.value * CommonStatic.charaRateX;
-			float rz = UnityEngine.Random.value * CommonStatic.charaRateZ;
-			float ry = UnityEngine.Random.Range (0.8f, 1.2f);
-			float angleDir = transform.eulerAngles.y * (Mathf.PI / 180.0f);
-			Vector3 dir = new Vector3 (Mathf.Cos (angleDir), Mathf.Sin (angleDir), 0.0f);
-			Vector3 force = new Vector3 (dir.x * rx * 8.0f, ry, dir.z * rz * 8.0f);
-			GameObject cakePirce = Instantiate (cakePiecePref, transform.position, Quaternion.identity);
-			Rigidbody cakeRig = cakePirce.GetComponent<Rigidbody> ();
-			cakeRig.AddForce (force, ForceMode.Impulse);
-		}
+		Vector3 frontPos = transform.FindChild ("frontPoint").position;
+		float ry = UnityEngine.Random.Range(0.9f, 1.4f);
+		Vector3 dir = (frontPos-transform.position).normalized;
+		Vector3 force = new Vector3 (dir.x *scalePasaPasaForceModify , ry, dir.z * scalePasaPasaForceModify);
+		Rigidbody cakeRig = cakePirceObj.GetComponent<Rigidbody> ();
+		cakeRig.useGravity = true;
+		cakeRig.AddForce (force, ForceMode.Impulse);
 	}
 
 	private void firstSonAttack(){
-		if (pinchingCharacter != null) {
-			for (int i = 0; i < 20; i++) {
-				float rx = UnityEngine.Random.value * CommonStatic.charaRateX;
-				float rz = UnityEngine.Random.value * CommonStatic.charaRateZ;
-
-				float ry = UnityEngine.Random.Range (0.8f, 1.2f);
-				Vector3 meDir = (pinchingCharacter.transform.position - transform.position).normalized;
-				Vector3 force = new Vector3 (meDir.x * rx * 8.0f, ry, meDir.z * rz * 8.0f);
-
-				GameObject cakePirce = Instantiate (cakePiecePref, transform.position, Quaternion.identity);
-				Rigidbody cakeRig = cakePirce.GetComponent<Rigidbody> ();
-				cakeRig.AddForce (force, ForceMode.Impulse);
-			}
-		} else {
-			onProximityPreset = false;
-			onProximity = false;
-		}
+		pasapasaPreset ();
+		pasapasa ();
+		pasapasaPreset ();
+		pasapasa ();
 	}
 
 	protected override void OnEnterTrigger(Collider other) {
@@ -271,17 +261,22 @@ public class ChonanController : SimpleController {
 	}
 
 	public void OnPasaPasaAnimationStartFlame(){
-		//Debug.Log ("OnPasaPasaAnimationStartFlame");
+		Debug.Log ("pawapasapeset");
+		pasapasaPreset ();
+	}
+
+	public void OnPasaPasaAnimationThrowFlame(){
+		Debug.Log ("OnPasaPasaAnimationStartFlame");
 		pasapasa ();
 	}
 
 	public void OnPasaPasaAttackAnimationStartFlame(){
 		//Debug.Log ("OnPasaPasaAttackAnimationStartFlame");
-		firstSonAttack ();
 	}
 
 	public void OnPasaPasaAttackAnimationThrowPointFlame(){
 		//Debug.Log ("OnPasaPasaAttackAnimationThrowPointFlame");
+		firstSonAttack ();
 	}
 		
 	public void OnSquadtoMorphFlame(){
