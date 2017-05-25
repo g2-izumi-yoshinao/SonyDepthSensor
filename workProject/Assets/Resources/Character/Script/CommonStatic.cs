@@ -15,6 +15,7 @@ public class CommonStatic : MonoBehaviour {
 	public static string CAP_SURFACE_TAG = "capWaterSurface";
 	public static string SON_TAG = "son";
 	public static string PASAPASA_TAG = "pasapasa";
+	public static string CAKE_PIECE_TAG = "cakePiece";
 
 	//charactre poly to unity 1 float scale scae base
 	public static float charaRateX=0.04f;//scale1 as unity1

@@ -57,4 +57,16 @@ public class testButton : MonoBehaviour {
 		}
 
 	}
+
+	bool bt4=false;
+	public void ClickBtn4 () {
+		if (!bt4) {
+			bt4 = true;
+			ReactionCharacterController rc
+			  = GameObject.FindGameObjectWithTag ("me").GetComponentInChildren<ReactionCharacterController> ();;
+			rc.testFootPrint ();
+			bt4 = false;
+		}
+
+	}
 }

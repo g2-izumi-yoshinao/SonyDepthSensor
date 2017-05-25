@@ -133,7 +133,7 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	private int moveframeCnt = 0;
 	private float sigWait = 1.0f;
-	private float forwardSpeed = 0.05f;
+	private float forwardSpeed = 0.04f;
 	private int ancflg=1;
 
 	public bool stableType=false;
@@ -147,6 +147,14 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	public GameObject kirakiraEffect;
 
+	private float footPrintSize=0.02f;//base 1m mesh box
+	private bool onFootPrintState=false;
+	private bool onFootPrintInit=false;
+	public GameObject footPrintL=null;
+	public GameObject footPrintR=null;
+	private int footPrintCount;
+	private int footOneTimePrintMaxCount=9;//odd l else r
+	private Vector3 preFootPoint;
 
 	public bool onAction=false;
 
@@ -313,7 +321,11 @@ public class ReactionCharacterController : MonoBehaviour {
 		}
 
 		if (!stableType) { //walk round
-			
+
+			if (onFootPrintState) {
+				footPrint ();
+			}
+
 			if (groundActionState == ActionOnGroundState.walking) {
 				if (currentAnimationState.fullPathHash != WalkingState) {
 					animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
@@ -765,6 +777,45 @@ public class ReactionCharacterController : MonoBehaviour {
 			material_hadaM.color 
 				= new Color (material_hadaM.color.r, material_hadaM.color.g, material_hadaM.color.b, alpha);
 
+		}
+	}
+
+	void OnTriggerEnter(Collider other) {
+		if (other.gameObject.tag == CommonStatic.CAKE_PIECE_TAG) {
+			if (!onFootPrintState) {
+				onFootPrintState = true;
+				onFootPrintInit = true;
+			}
+		}
+	}
+
+	private void footPrint(){
+		
+		if(onFootPrintInit){
+			preFootPoint = new Vector3 (0, 0, 0);
+			onFootPrintInit = false;
+			footPrintCount = 0;
+		}
+		if (footPrintCount > footOneTimePrintMaxCount) {
+			onFootPrintState = false;
+		}
+
+		if ((transform.position - preFootPoint).magnitude > footPrintSize) {
+			if (footPrintCount % 2 == 0) {
+				Instantiate (footPrintL, transform.position, footPrintL.transform.rotation);
+			} else {
+				Instantiate (footPrintR, transform.position, footPrintL.transform.rotation);
+			}
+			preFootPoint = transform.position;
+			footPrintCount++;
+		}
+
+	}
+
+	public void testFootPrint(){
+		if (!onFootPrintState) {
+			onFootPrintState = true;
+			onFootPrintInit = true;
 		}
 	}
 }
