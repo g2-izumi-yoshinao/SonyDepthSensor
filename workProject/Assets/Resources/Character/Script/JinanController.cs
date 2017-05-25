@@ -82,6 +82,7 @@ public class JinanController : SimpleController {
 				clearVelocityXZ ();
 				if (haveClreamObj != null) {
 					Destroy (haveClreamObj);
+					haveClreamObj = null;
 				}
 				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 			}
@@ -150,6 +151,9 @@ public class JinanController : SimpleController {
 	}
 
 	public void OnHaveCakeEndFlame(){
-
+		if (haveClreamObj != null) {
+			Destroy (haveClreamObj);
+			haveClreamObj = null;
+		}
 	}
 }
