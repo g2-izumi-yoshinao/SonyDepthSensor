@@ -268,12 +268,12 @@ public class ChonanController : SimpleController {
 	}
 
 	public void OnPasaPasaAnimationStartFlame(){
-		Debug.Log ("pawapasapeset");
+		///Debug.Log ("pawapasapeset");
 		pasapasaPreset ();
 	}
 
 	public void OnPasaPasaAnimationThrowFlame(){
-		Debug.Log ("OnPasaPasaAnimationStartFlame");
+		//Debug.Log ("OnPasaPasaAnimationStartFlame");
 		if ((onMorphingInState)|| (onMorphingWaitState)||(onMorphingOutState)){
 			return;
 		}

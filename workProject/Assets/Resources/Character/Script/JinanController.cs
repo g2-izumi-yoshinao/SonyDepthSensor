@@ -143,6 +143,10 @@ public class JinanController : SimpleController {
 	public void OnHeadrollEndFlame(){
 		//Debug.Log ("OnHeadrollEndFlame");
 		onPointState = false;
+		if (haveClreamObj != null) {
+			Destroy (haveClreamObj);
+			haveClreamObj = null;
+		}
 	}
 
 	public void OnHaveCakeStartFlame(){

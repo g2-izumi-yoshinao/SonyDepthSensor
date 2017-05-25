@@ -9,7 +9,7 @@ public class SannanController : SimpleController {
 	private float bodySignFreq = 3.0f;
 
 	private bool onRunning=false;
-	private float perRndRote=3;
+	private float perRndRote=-3;
 	private int runLoopCnt=0;
 	private bool preHit=false;
 	private Collider targetCollider;
@@ -17,6 +17,7 @@ public class SannanController : SimpleController {
 
 	private float rndflg=1;
 	private float currentRnd=0;
+	private bool onWowState = false;
 
 	protected override void onStart(){
 		
@@ -35,41 +36,30 @@ public class SannanController : SimpleController {
 				}
 			}
 		}
-
-		if (onPointState) {
-			if (onPointStateInit) {
-				onPointStateInit = false;
-				onProximity = true;
-				initProximity = true;
-			}
-		}
-
-		if (onProximity) {
-			if (initProximity) {
-				initProximity = false;
-				runLoopCnt = 0;
-				preHit = false;
-				transform.rotation = SimpleController.identityQue();
-				if (pinchingCharacter != null) {
-					Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
-						transform.position.y,
-						pinchingCharacter.transform.position.z);
-					transform.root.LookAt (targetDir);
-				} else {
-					onProximityPreset = false;
-					onProximity = false;
+		if (!onWowState) {
+			if (onPointState) {
+				if (onPointStateInit) {
+					onPointStateInit = false;
+					onProximity = true;
+					initProximity = true;
 				}
-				transform.rotation = SimpleController.identityQue();
-				animator.SetTrigger (ANIM_TRIGGER_WOWJUMP_NAME);
+			}
+
+			if (onProximity) {
+				if (initProximity) {
+					initProximity = false;
+					onWowState = true;
+					runLoopCnt = 0;
+					preHit = inSight ();
+					transform.rotation = SimpleController.identityQue ();
+					transform.rotation = SimpleController.identityQue ();
+					animator.SetTrigger (ANIM_TRIGGER_WOWJUMP_NAME);
+				}
 			}
 		}
-
 		if (onRunning) {
 			rotaionXYTaget ();
-			Vector3 rayDir = (VirtualCameraPos - transform.position).normalized;
-			Ray ray = new Ray(transform.position,rayDir);
-			RaycastHit hit;
-			bool currenthit = (targetCollider.Raycast (ray, out hit, 5.0f));
+			bool currenthit = inSight ();
 			if (preHit != currenthit) {
 				preHit = currenthit;
 				runLoopCnt++;
@@ -80,10 +70,18 @@ public class SannanController : SimpleController {
 						onPointState = false;
 						transform.rotation = SimpleController.identityQue();
 						animator.SetTrigger (ANIM_TRIGGER_STANDING_NAME);
+						onWowState = false;
 					}
 				}
 			}
 		}
+	}
+
+	private bool inSight(){
+		Vector3 rayDir = (VirtualCameraPos - transform.position).normalized;
+		Ray ray = new Ray(transform.position,rayDir);
+		RaycastHit hit;
+		return  (targetCollider.Raycast (ray, out hit, 5.0f));
 	}
 
 	protected override void onLateUpdate(){
