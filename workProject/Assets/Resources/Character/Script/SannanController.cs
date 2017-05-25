@@ -13,7 +13,7 @@ public class SannanController : SimpleController {
 	private int runLoopCnt=0;
 	private bool preHit=false;
 	private Collider targetCollider;
-	private int runLoopMaxCnt=6;
+	private int runLoopMaxCnt=4;
 
 	private float rndflg=1;
 	private float currentRnd=0;
@@ -84,7 +84,6 @@ public class SannanController : SimpleController {
 				}
 			}
 		}
-
 	}
 
 	protected override void onLateUpdate(){

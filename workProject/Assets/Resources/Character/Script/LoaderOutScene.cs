@@ -124,16 +124,16 @@ public class LoaderOutScene : MonoBehaviour {
 			
 				//second son
 				edges= CommonStatic.getSightEdgePoint (cakeObj,cakeExecuteSize.x/2.0f,VirtualCameraPos);
-				randomVal =UnityEngine.Random.Range (0, 10);
+				//randomVal =UnityEngine.Random.Range (0, 10);
 				//Vector3 secondSonStartPos=((randomVal % 2)==0)?edges[0]:edges[1];
 				Vector3 secondSonStartPos;
 				bool onleft = false;
-				if ((randomVal % 2) == 0) {
-					onleft = true;
-					secondSonStartPos=edges [0] ;
-				} else {
+				//if ((randomVal % 2) == 0) {
+				//	onleft = true;
+				//	secondSonStartPos=edges [0] ;
+				//} else {
 					secondSonStartPos=edges [1];
-				}
+				//}
 				secondSonStartPos.y = groundTop+CommonStatic.charaRateY / 2f;
 				JinanController jinanObj = Instantiate (jinan, secondSonStartPos, SimpleController.identityQue());
 				jinanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
@@ -144,8 +144,9 @@ public class LoaderOutScene : MonoBehaviour {
 
 				//third son
 				edges= CommonStatic.getSightEdgePoint (capObj,capExecuteSize.x/2.0f,VirtualCameraPos);
-				randomVal =UnityEngine.Random.Range (0, 10);
-				Vector3 edgepos=((randomVal % 2)==0)?edges[0]:edges[1];
+				//randomVal =UnityEngine.Random.Range (0, 10);
+				//Vector3 edgepos=((randomVal % 2)==0)?edges[0]:edges[1];
+				Vector3 edgepos=edges[0];
 				float hideback = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y)*1.1f;
 				Vector3 thirdSonStartPos = new Vector3 (edgepos.x, 
 					groundTop+CommonStatic.charaRateY / 2f, edgepos.z + hideback);

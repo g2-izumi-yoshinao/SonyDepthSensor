@@ -37,6 +37,9 @@ public class JinanController : SimpleController {
 	private float totalMaxCakePiceCnt=0;
 	private float totalMaxCakePiceMaxCnt=60;
 
+	public GameObject haveClream;
+	private GameObject haveClreamObj;
+
 	protected override void onStart(){
 
 	}
@@ -77,6 +80,9 @@ public class JinanController : SimpleController {
 				initWalking = false;
 				currentRnd = oneTimeRnd;
 				clearVelocityXZ ();
+				if (haveClreamObj != null) {
+					Destroy (haveClreamObj);
+				}
 				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 			}
 			if (!spritRotaionXYTaget ()) {
@@ -136,5 +142,14 @@ public class JinanController : SimpleController {
 	public void OnHeadrollEndFlame(){
 		//Debug.Log ("OnHeadrollEndFlame");
 		onPointState = false;
+	}
+
+	public void OnHaveCakeStartFlame(){
+		Vector3 cakePos = transform.FindChild ("cakePos").position;
+		haveClreamObj = Instantiate (haveClream, cakePos, haveClream.transform.rotation);
+	}
+
+	public void OnHaveCakeEndFlame(){
+
 	}
 }
