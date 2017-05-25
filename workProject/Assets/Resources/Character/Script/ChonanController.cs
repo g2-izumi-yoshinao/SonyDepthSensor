@@ -227,8 +227,10 @@ public class ChonanController : SimpleController {
 	}
 
 	private void pasapasaPreset(){
-		Vector3 frontPos = transform.FindChild ("frontPoint").position;
-		cakePirceObj = Instantiate (cakePiecePref, frontPos, Quaternion.identity);
+		if (cakePirceObj == null) {
+			Vector3 frontPos = transform.FindChild ("frontPoint").position;
+			cakePirceObj = Instantiate (cakePiecePref, frontPos, Quaternion.identity);
+		}
 	}
 
 	private void pasapasa(){
@@ -239,6 +241,7 @@ public class ChonanController : SimpleController {
 		Rigidbody cakeRig = cakePirceObj.GetComponent<Rigidbody> ();
 		cakeRig.useGravity = true;
 		cakeRig.AddForce (force, ForceMode.Impulse);
+		cakePirceObj = null;
 	}
 
 	private void firstSonAttack(){
