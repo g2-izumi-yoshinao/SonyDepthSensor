@@ -296,4 +296,7 @@ public class SimpleController : MonoBehaviour {
 
 	}
 
+	public static Quaternion identityQue(){
+		return Quaternion.AngleAxis (-180, new Vector3 (0, 1, 0));
+	}
 }

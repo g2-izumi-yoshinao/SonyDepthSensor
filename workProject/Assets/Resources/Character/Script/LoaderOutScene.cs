@@ -28,16 +28,18 @@ public class LoaderOutScene : MonoBehaviour {
 	private bool loaded=false;
 
 	//sencor value estimage 
-	private float groundy=-0.2f;
-	private float scaleCharacter = 1.5f;//may required caluc self in relation with cake scale or some
-	private Vector3 postionMainCamera = new Vector3(0f,0,0f);
-	private Vector2 postionGroundCenterXY = new Vector2(0f,-1.5f);
-	private Vector2 postionCakeCenterXY = new Vector2(0.2f,-1.5f);
-	private Vector2 postionCapCenterXY = new Vector2(-0.15f,-1.48f);
+	private float groundy=-0.6f;
+	private float scaleCharacter =2.0f; //1.5f;//may required caluc self in relation with cake scale or some
+	//private Vector3 postionMainCamera = new Vector3(0f,0,0f); for debug
+	private Vector2 postionGroundCenterXY = new Vector2(0f,0.25f);
+	private Vector2 postionCakeCenterXY = new Vector2(-0.165f,0.8f);
+	private Vector2 postionCapCenterXY = new Vector2(0.15f,0.597f);
 
 	private Vector3 groundExecuteSize;
 	private Vector3 cakeExecuteSize;
 	private Vector3 capExecuteSize;
+
+	private float groundTop=0;
 
 	void Start () {
 		//sensor start 
@@ -50,7 +52,7 @@ public class LoaderOutScene : MonoBehaviour {
 			if (!loaded) {
 				loaded = true;
 
-				GameObject.FindGameObjectWithTag ("MainCamera").transform.position = postionMainCamera;
+				//GameObject.FindGameObjectWithTag ("MainCamera").transform.position = postionMainCamera;
 
 				Vector3 meshSize;
 				groundObj = Instantiate (groundPrefab, new Vector3 (1, 0, 0), Quaternion.identity);
@@ -60,11 +62,11 @@ public class LoaderOutScene : MonoBehaviour {
 				   = new Vector3 (meshSize.x * CommonStatic.outCamScaleGround.x,
 					meshSize.y * CommonStatic.outCamScaleGround.y,
 					meshSize.z * CommonStatic.outCamScaleGround.z);
-				Vector3 postionGround = new Vector3 (postionGroundCenterXY.x, groundy-groundExecuteSize.y/2, postionGroundCenterXY.y);
+				Vector3 postionGround = new Vector3 (postionGroundCenterXY.x, groundy, postionGroundCenterXY.y);
 				groundObj.transform.position = postionGround;
 
-				//double cakeSizeY=CommonStatic.cakeRateY * CommonStatic.outCamScaleCake.y;
-				//Vector3 postionCake = new Vector3 (postionCakeCenterXY.x, groundy+(float)cakeSizeY/2.0f, postionCakeCenterXY.y);
+				groundTop = groundy + groundExecuteSize.y / 2;
+
 
 				Quaternion cakeQ = Quaternion.AngleAxis (-90, new Vector3 (1, 0, 0));
 				cakeObj = Instantiate (cakePrefab, new Vector3(0,0,0), cakeQ);
@@ -75,7 +77,8 @@ public class LoaderOutScene : MonoBehaviour {
 					meshSize.x * CommonStatic.outCamScaleCake.x,
 					meshSize.y * CommonStatic.outCamScaleCake.y,
 					meshSize.z * CommonStatic.outCamScaleCake.z);
-				Vector3 postionCake = new Vector3 (postionCakeCenterXY.x, groundy+cakeExecuteSize.z/2.0f, postionCakeCenterXY.y);
+				//groundTop+cakeExecuteSize.z/2.0f
+				Vector3 postionCake = new Vector3 (postionCakeCenterXY.x,-0.1f, postionCakeCenterXY.y);
 				cakeObj.transform.position = postionCake;
 	
 
@@ -94,14 +97,15 @@ public class LoaderOutScene : MonoBehaviour {
 					= new Vector3 (meshSize.x * CommonStatic.outCamScaleCap.x,
 						meshSize.y * CommonStatic.outCamScaleCap.y,
 						meshSize.z * CommonStatic.outCamScaleCap.z);
-				Vector3 postionCap = new Vector3 (postionCapCenterXY.x, groundy+capExecuteSize.y/2.0f, postionCapCenterXY.y);
+				//groundTop+capExecuteSize.y/2.0f
+				Vector3 postionCap = new Vector3 (postionCapCenterXY.x, -0.1f, postionCapCenterXY.y);
 				capObj.transform.position = postionCap;
 
 
 				Vector3 cameraPos = GameObject.FindGameObjectWithTag ("MainCamera").transform.position;
-				float diff= groundObj.transform.position.z-cameraPos.z;
-				Vector3 VirtualCameraPos = new Vector3 (cameraPos.x, cameraPos.y, -2.0f);
-				//Vector3 VirtualCameraPos = cameraPos;
+				//float diff= groundObj.transform.position.z-cameraPos.z;
+				//Vector3 VirtualCameraPos = new Vector3 (cameraPos.x, cameraPos.y, -2.0f);
+				Vector3 VirtualCameraPos = cameraPos;
 
 			    //sons
 				Vector3[] edges;
@@ -114,7 +118,7 @@ public class LoaderOutScene : MonoBehaviour {
 					cakeObj.transform.position.y+cakeExecuteSize.z/2.0f + CommonStatic.charaRateY/2f,
 					cakeObj.transform.position.z);
 				
-				ChonanController chonanObj = Instantiate (chonan, firstSonStartPos, Quaternion.identity);
+				ChonanController chonanObj = Instantiate (chonan, firstSonStartPos, SimpleController.identityQue());
 				chonanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
 				sonObjs [0] = chonanObj.GetComponentInChildren<SimpleController> (true);
 			
@@ -130,8 +134,8 @@ public class LoaderOutScene : MonoBehaviour {
 				} else {
 					secondSonStartPos=edges [1];
 				}
-				secondSonStartPos.y = groundy+CommonStatic.charaRateY / 2f;
-				JinanController jinanObj = Instantiate (jinan, secondSonStartPos, Quaternion.identity);
+				secondSonStartPos.y = groundTop+CommonStatic.charaRateY / 2f;
+				JinanController jinanObj = Instantiate (jinan, secondSonStartPos, SimpleController.identityQue());
 				jinanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
 				sonObjs [1] = jinanObj.GetComponentInChildren<SimpleController> (true);
 				float sideSpan = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y)/2 ;
@@ -142,10 +146,10 @@ public class LoaderOutScene : MonoBehaviour {
 				edges= CommonStatic.getSightEdgePoint (capObj,capExecuteSize.x/2.0f,VirtualCameraPos);
 				randomVal =UnityEngine.Random.Range (0, 10);
 				Vector3 edgepos=((randomVal % 2)==0)?edges[0]:edges[1];
-				float hideback = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y);
+				float hideback = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y)*1.1f;
 				Vector3 thirdSonStartPos = new Vector3 (edgepos.x, 
-					groundy+CommonStatic.charaRateY / 2f, edgepos.z + hideback);
-				SannanController sannanObj = Instantiate (sannnan, thirdSonStartPos, Quaternion.identity);
+					groundTop+CommonStatic.charaRateY / 2f, edgepos.z + hideback);
+				SannanController sannanObj = Instantiate (sannnan, thirdSonStartPos, SimpleController.identityQue());
 				sannanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
 				sonObjs [2] = sannanObj.GetComponentInChildren<SimpleController> (true);
 
@@ -170,15 +174,16 @@ public class LoaderOutScene : MonoBehaviour {
 		cap.showKumamon ();
 
 		//debug----
-		Vector3 meStartPos = new Vector3 (0,
-			groundy + CommonStatic.charaRateY / 2f,-1.2f);
-		GameObject me=Instantiate(mePrefab,meStartPos, Quaternion.identity);
+		Vector3 meStartPos = new Vector3 (postionGroundCenterXY.x ,
+			groundTop + CommonStatic.charaRateY / 2f,
+			postionCapCenterXY.y+0.04f);
+		GameObject me=Instantiate(mePrefab,meStartPos, SimpleController.identityQue());
 		me.transform.localScale = new Vector3(scaleCharacter, scaleCharacter, scaleCharacter);
 		meObj = me.GetComponentInChildren<ReactionCharacterController> (true);
 		meObj.setAction (true);
 
 		ReactionCharacterController rc = meObj.GetComponentInChildren<ReactionCharacterController> (true);
-		rc.stableType = true;
+		rc.stableType = false;
 
 	}
 

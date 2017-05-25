@@ -49,7 +49,7 @@ public class SannanController : SimpleController {
 				initProximity = false;
 				runLoopCnt = 0;
 				preHit = false;
-				transform.rotation = Quaternion.identity;
+				transform.rotation = SimpleController.identityQue();
 				if (pinchingCharacter != null) {
 					Vector3 targetDir = new Vector3 (pinchingCharacter.transform.position.x,
 						transform.position.y,
@@ -59,6 +59,7 @@ public class SannanController : SimpleController {
 					onProximityPreset = false;
 					onProximity = false;
 				}
+				transform.rotation = SimpleController.identityQue();
 				animator.SetTrigger (ANIM_TRIGGER_WOWJUMP_NAME);
 			}
 		}
@@ -77,6 +78,7 @@ public class SannanController : SimpleController {
 						onRunning = false;
 						onProximity = false;
 						onPointState = false;
+						transform.rotation = SimpleController.identityQue();
 						animator.SetTrigger (ANIM_TRIGGER_STANDING_NAME);
 					}
 				}
@@ -86,7 +88,7 @@ public class SannanController : SimpleController {
 	}
 
 	protected override void onLateUpdate(){
-		if ((!onProximity)&&(!onPointState)){
+		if ((!onProximity) && (!onPointState) && (currentAnimationState.fullPathHash == StandingState)) {
 			swing ();
 		}
 	}

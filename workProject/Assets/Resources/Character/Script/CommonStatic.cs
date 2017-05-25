@@ -32,7 +32,7 @@ public class CommonStatic : MonoBehaviour {
 //	public static double groundRateY=1;//scale1 as unity1
 
 	//display scale
-	public static Vector3 outCamScaleCharacter =  new Vector3(1.5f,1.5f,1.6f);
+	public static Vector3 outCamScaleCharacter = new Vector3(2.0f,2.0f,2.0f); //new Vector3(1.5f,1.5f,1.6f);
 	public static Vector3 outCamScaleCap =  new Vector3(0.5f,0.71f,0.5f);
 	public static Vector3 outCamScaleGround =  new Vector3(1.5f,1f,1.5f);
 	public static Vector3 outCamScaleCake =  new Vector3(2f,2f,2f);

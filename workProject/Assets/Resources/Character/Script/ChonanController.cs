@@ -23,6 +23,7 @@ public class ChonanController : SimpleController {
 	private bool onMorphingWaitState=false;
 	private bool onMorphingOutState=false;
 	public  GameObject smokeEffect=null;
+	public  GameObject pasaEffect=null;
 	public  GameObject ichigoPref;
 	private float alphaValIchigo=0.0f;
 	public Material ichigoMesh;
@@ -37,6 +38,9 @@ public class ChonanController : SimpleController {
 	protected override void onStart(){
 		if (smokeEffect != null) {
 			smokeEffect.SetActive (false);
+		}
+		if (pasaEffect != null) {
+			pasaEffect.SetActive (false);
 		}
 	}
 	
@@ -270,7 +274,12 @@ public class ChonanController : SimpleController {
 
 	public void OnPasaPasaAnimationThrowFlame(){
 		Debug.Log ("OnPasaPasaAnimationStartFlame");
+		pasaEffect.SetActive (true);
 		pasapasa ();
+	}
+
+	public void OnPasaPasaAnimationEndFlame(){
+		pasaEffect.SetActive (false);
 	}
 
 	public void OnPasaPasaAttackAnimationStartFlame(){
@@ -279,9 +288,16 @@ public class ChonanController : SimpleController {
 
 	public void OnPasaPasaAttackAnimationThrowPointFlame(){
 		//Debug.Log ("OnPasaPasaAttackAnimationThrowPointFlame");
+		pasaEffect.SetActive (true);
 		firstSonAttack ();
 	}
 		
+	public void OnPasaPasaAttackAnimationEndFlame(){
+		//Debug.Log ("OnPasaPasaAttackAnimationStartFlame");
+		pasaEffect.SetActive (false);
+	}
+
+
 	public void OnSquadtoMorphFlame(){
 		//Debug.Log ("OnSquadtoMorphFlame");
 	}
