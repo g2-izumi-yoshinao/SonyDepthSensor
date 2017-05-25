@@ -103,13 +103,10 @@ public class LoaderOutScene : MonoBehaviour {
 
 
 				Vector3 cameraPos = GameObject.FindGameObjectWithTag ("MainCamera").transform.position;
-				//float diff= groundObj.transform.position.z-cameraPos.z;
-				//Vector3 VirtualCameraPos = new Vector3 (cameraPos.x, cameraPos.y, -2.0f);
 				Vector3 VirtualCameraPos = cameraPos;
 
 			    //sons
 				Vector3[] edges;
-				int randomVal;
 				sonObjs = new SimpleController[3];
 	
 				//first son 
@@ -124,31 +121,20 @@ public class LoaderOutScene : MonoBehaviour {
 			
 				//second son
 				edges= CommonStatic.getSightEdgePoint (cakeObj,cakeExecuteSize.x/2.0f,VirtualCameraPos);
-				//randomVal =UnityEngine.Random.Range (0, 10);
-				//Vector3 secondSonStartPos=((randomVal % 2)==0)?edges[0]:edges[1];
 				Vector3 secondSonStartPos;
-				bool onleft = false;
-				//if ((randomVal % 2) == 0) {
-				//	onleft = true;
-				//	secondSonStartPos=edges [0] ;
-				//} else {
-					secondSonStartPos=edges [1];
-				//}
+				secondSonStartPos=edges [1];
 				secondSonStartPos.y = groundTop+CommonStatic.charaRateY / 2f;
 				JinanController jinanObj = Instantiate (jinan, secondSonStartPos, SimpleController.identityQue());
 				jinanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
 				sonObjs [1] = jinanObj.GetComponentInChildren<SimpleController> (true);
 				float sideSpan = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y)/2 ;
-				int flg = onleft ? 1 : -1;
-				jinanObj.transform.position += new Vector3 (flg*sideSpan, 0,0);
+				jinanObj.transform.position += new Vector3 (-sideSpan, 0,0);
 
 				//third son
 				edges= CommonStatic.getSightEdgePoint (capObj,capExecuteSize.x/2.0f,VirtualCameraPos);
-				//randomVal =UnityEngine.Random.Range (0, 10);
-				//Vector3 edgepos=((randomVal % 2)==0)?edges[0]:edges[1];
 				Vector3 edgepos=edges[0];
 				float hideback = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y)*1.1f;
-				Vector3 thirdSonStartPos = new Vector3 (edgepos.x, 
+				Vector3 thirdSonStartPos = new Vector3 (edgepos.x+0.02f, 
 					groundTop+CommonStatic.charaRateY / 2f, edgepos.z + hideback);
 				SannanController sannanObj = Instantiate (sannnan, thirdSonStartPos, SimpleController.identityQue());
 				sannanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);

@@ -27,7 +27,7 @@ public class SannanController : SimpleController {
 		
 		if (loadFirst) {
 			loadFirst = false;
-			lookCamera ();
+			//lookCamera ();
 			Collider[] colliders=AimTarget.GetComponentsInChildren<Collider>(true);
 			foreach(Collider cl in colliders){
 				if (cl.gameObject.name=="mesh_cup_base") {
@@ -86,7 +86,7 @@ public class SannanController : SimpleController {
 
 	protected override void onLateUpdate(){
 		if ((!onProximity) && (!onPointState) && (currentAnimationState.fullPathHash == StandingState)) {
-			swing ();
+			//swing ();
 		}
 	}
 		
