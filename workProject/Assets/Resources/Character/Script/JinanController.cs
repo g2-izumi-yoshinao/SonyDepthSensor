@@ -33,9 +33,9 @@ public class JinanController : SimpleController {
 	private float throwCakePieceElapse;
 	private float throwCakePieceEmit=10;
 	private float throwCakePieceCount=0;
-	private float throwCakePieceMax=3;
+	private float throwCakePieceMax=6;
 	private float totalMaxCakePiceCnt=0;
-	private float totalMaxCakePiceMaxCnt=60;
+	private float totalMaxCakePiceMaxCnt=100;
 
 	public GameObject haveClream;
 	private GameObject haveClreamObj;
@@ -55,7 +55,11 @@ public class JinanController : SimpleController {
 		if (onPointState) {
 			if (onPointStateInit) {
 				onPointStateInit = false;
-				animator.SetTrigger (ANIM_TRIGGER_HEAD_ROLL_NAME);
+				if (secondsonActionState == secondSon_Action.having) {
+					animator.SetTrigger (ANIM_TRIGGER_HEAD_ROLL_NAME);
+				} else {
+					onPointState = false;
+				}
 			}
 			return;
 		}
@@ -141,7 +145,7 @@ public class JinanController : SimpleController {
 	}
 
 	public void OnHeadrollEndFlame(){
-		//Debug.Log ("OnHeadrollEndFlame");
+		Debug.Log ("OnHeadrollEndFlame");
 		onPointState = false;
 		if (haveClreamObj != null) {
 			Destroy (haveClreamObj);
