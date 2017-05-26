@@ -110,7 +110,6 @@ public class ChonanController : SimpleController {
 				}
 				attachElapse = 0;
 				if (pinchingCharacter != null) {
-					pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.meetFirstSon);
 					animator.SetTrigger (ANIM_TRIGGER_PASAPASA_ATTACK_NAME);
 				} else {
 					onProximityPreset = false;
@@ -127,7 +126,6 @@ public class ChonanController : SimpleController {
 				attachElapse += Time.deltaTime;
 				if (attachElapse > attackTimeOut) {
 					onProximity = false;
-					pinchingCharacter.switchOnGroundActinState (ReactionCharacterController.ActionOnGroundState.meetFirstSonOver);
 				}
 			}else {
 				onProximityPreset = false;

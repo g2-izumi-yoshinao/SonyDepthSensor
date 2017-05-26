@@ -39,6 +39,8 @@ public class LoaderOutScene : LoaderBase {
 	private Vector3 cakeExecuteSize;
 	private Vector3 capExecuteSize;
 
+	private Vector3 thirdSonStartPos;
+
 	private float groundTop=0;
 
 	void Start () {
@@ -134,7 +136,7 @@ public class LoaderOutScene : LoaderBase {
 				edges= CommonStatic.getSightEdgePoint (capObj,capExecuteSize.x/2.0f,VirtualCameraPos);
 				Vector3 edgepos=edges[0];
 				float hideback = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y)*1.1f;
-				Vector3 thirdSonStartPos = new Vector3 (edgepos.x+0.02f, 
+				thirdSonStartPos = new Vector3 (edgepos.x+0.02f, 
 					groundTop+CommonStatic.charaRateY / 2f, edgepos.z + hideback);
 				SannanController sannanObj = Instantiate (sannnan, thirdSonStartPos, SimpleController.identityQue());
 				sannanObj.transform.localScale = new Vector3 (scaleCharacter, scaleCharacter, scaleCharacter);
@@ -170,7 +172,7 @@ public class LoaderOutScene : LoaderBase {
 		rc.setLoaderReference(this);
 		meObj.setAction (true);
 
-
+		meObj.startShow ();
 	}
 
 	private void clean(){
@@ -188,5 +190,19 @@ public class LoaderOutScene : LoaderBase {
 
 	}
 
+	public Transform getJinanTransform(){
+		return sonObjs [1].transform;
+	}
 
+	public Transform getCapTransform(){
+		return capObj.transform;
+	}
+
+	public Vector3 getCapExecuteSize(){
+		return capExecuteSize;
+	}
+
+	public Vector3 getCharaExecuteSize(){
+		return scaleCharacter*(new Vector3(CommonStatic.charaRateX,CommonStatic.charaRateY,CommonStatic.charaRateZ));
+	}
 }

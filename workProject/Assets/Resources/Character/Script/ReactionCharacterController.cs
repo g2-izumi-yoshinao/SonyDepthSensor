@@ -25,16 +25,7 @@ public class ReactionCharacterController : MonoBehaviour {
 		cheekRight,
 		cheek_cheek 
 	}
-
-	public enum ActionOnGroundState {
-		none,
-		walking,
-		meetFirstSon,
-		meetFirstSonOver,
-		meetSecondSon,
-		meetThiredSon
-	}
-
+		
 	private ActionTypeState actionType;
 
 	private const string PINCH_CHEEKLFET_NAME = "pinchCheekLeftPoint";
@@ -142,8 +133,6 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	public bool stableType=false;
 
-	private ActionOnGroundState groundActionState;
-	private ActionOnGroundState groundBaseActionState;
 
 	private Animator animator;
 	private Rigidbody rigid;
@@ -170,12 +159,6 @@ public class ReactionCharacterController : MonoBehaviour {
 		sound = GetComponent<AudioSource> ();
 
 		//default on ground actions
-		if (stableType) {
-			groundBaseActionState = ActionOnGroundState.none;
-		} else {
-			groundBaseActionState = ActionOnGroundState.walking;
-		}
-		groundActionState = groundBaseActionState;
 
 		if (kirakiraEffect != null) {
 			kirakiraEffect.SetActive(false);
@@ -330,75 +313,17 @@ public class ReactionCharacterController : MonoBehaviour {
 
 		if (!stableType) { //walk round
 
-			if (onFootPrintState) {
-				footPrint ();
-			}
 
-			if (groundActionState == ActionOnGroundState.walking) {
-				randomWalk ();
-			} else {
+
 				if (currentAnimationState.fullPathHash != StandingState) {
 					animator.SetTrigger (ANIM_TRIGGER_STANDING_NAME);
 				}
-			}
+
 
 		} else { 
-			groundActionState = groundBaseActionState;
 		}
 	}
 
-	private void randomWalk(){
-		
-		if (currentAnimationState.fullPathHash != WalkingState) {
-			animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
-		}
-
-		moveframeCnt += 1;
-		if (moveframeCnt > 10000) {
-			moveframeCnt = 0;
-		}
-		float dz = 0f;
-		float dx = 0f;
-
-		dz = ancflg * Mathf.Sin (2.0f * Mathf.PI * sigWait * (float)(moveframeCnt % 200) / (200.0f - 1.0f));
-		dx = ancflg * Mathf.Sqrt (1.0f - Mathf.Pow (dz, 2));
-
-		Vector3 seekPois = transform.position 
-				+ (new Vector3 (dx * forwardSpeed * 2, transform.position.y-0.2f, dz * forwardSpeed * 2));
-
-		//ground check
-		bool findGround = false;
-		Collider[] edges = Physics.OverlapSphere (seekPois, 0.1f, -1, QueryTriggerInteraction.Collide);
-		for (int i = 0; i < edges.Length; i++) {
-			if (edges [i].gameObject.tag == CommonStatic.GROUND_TAG) {
-				findGround = true;
-				break;
-			}
-		}
-
-			//cake,cap,son
-		seekPois = transform.position 
-				+ (new Vector3 (dx * forwardSpeed * 2, transform.position.y+0.1f, dz * forwardSpeed * 2));
-
-		bool entryEny = false;
-		Collider[] objes = Physics.OverlapSphere (seekPois, 0.1f, -1, QueryTriggerInteraction.Collide);
-		for (int i = 0; i < objes.Length; i++) {
-			if ((objes [i].gameObject.tag == CommonStatic.CAP_TAG) ||
-			     (objes [i].gameObject.tag == CommonStatic.CAKE_TAG) ||
-			     (objes [i].gameObject.tag == CommonStatic.SON_TAG)) {
-				entryEny = true;
-				break;
-			}
-		}
-
-		if ((!findGround) || (entryEny)) {
-			ancflg = -1 * ancflg;
-		}
-
-		Vector3 direction = new Vector3 (dx, 0, dz);
-		transform.rotation = Quaternion.LookRotation (direction);
-		transform.localPosition += transform.forward * forwardSpeed * Time.fixedDeltaTime; 
-	}
 
 	private void none_LateUpdate(){
 		if (!swingArm (true, true)) {
@@ -700,18 +625,6 @@ public class ReactionCharacterController : MonoBehaviour {
 	}
 
 	//
-	public void switchOnGroundActinState(ActionOnGroundState state){
-		if (state == ReactionCharacterController.ActionOnGroundState.none) {
-			groundActionState = groundBaseActionState;
-		} else {
-			groundActionState = state;
-			if (state == ActionOnGroundState.meetFirstSon) {
-			}else if (state == ActionOnGroundState.meetFirstSonOver) {
-				animator.SetTrigger (ANIM_TRIGGER_HEADROLL_NAME);
-			}
-
-		}
-	}
 
 	public void headRollDicTime(){
 	}
@@ -792,52 +705,8 @@ public class ReactionCharacterController : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.tag == CommonStatic.CAKE_PIECE_TAG) {
-			if (!onFootPrintState) {
-				onFootPrintState = true;
-				onFootPrintInit = true;
-			}
-		}
 	}
 
-	private void footPrint(){
-		
-		if(onFootPrintInit){
-			preFootPoint = new Vector3 (0, 0, 0);
-			onFootPrintInit = false;
-			footPrintCount = 0;
-		}
-		if (footPrintCount > footOneTimePrintMaxCount) {
-			onFootPrintState = false;
-		}
 
-		if ((transform.position - preFootPoint).magnitude > footPrintSize) {
-			if (footPrintCount % 2 == 0) {
-				Instantiate (footPrintL, transform.position, footPrintL.transform.rotation);
-			} else {
-				Instantiate (footPrintR, transform.position, footPrintL.transform.rotation);
-			}
-			preFootPoint = transform.position;
-			footPrintCount++;
-		}
 
-	}
-
-	public void extFootPrint(){
-		if (!onFootPrintState) {
-			onFootPrintState = true;
-			onFootPrintInit = true;
-		}
-	}
-		
-
-	public void setActionTypeState(ActionTypeState state, LoaderBase loader){
-		actionType = state;
-		this.loader = loader;
-		if (actionType == ActionTypeState.outcamera) {
-			stableType = false;
-		} else {
-			stableType = true;
-		}
-	}
 }

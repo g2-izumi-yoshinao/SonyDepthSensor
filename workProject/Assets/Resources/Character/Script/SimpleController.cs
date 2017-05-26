@@ -40,7 +40,7 @@ public class SimpleController : MonoBehaviour {
 	protected Animator animator;
 	protected Rigidbody rigid;
 	protected bool loadFirst = true;
-	protected ReactionCharacterController pinchingCharacter;
+	protected AutoWalkMeController pinchingCharacter;
 
 	public GameObject cakePiecePref;
 
@@ -81,14 +81,9 @@ public class SimpleController : MonoBehaviour {
 
 		if (onProximityPreset) {
 			if (pinchingCharacter) {
-				if (pinchingCharacter.isOnGround ()) {
-					onProximityPreset = false;
-					onProximity = true;
-					initProximity = true;
-				}
-			} else {
 				onProximityPreset = false;
-				onProximity = false;
+				onProximity = true;
+				initProximity = true;
 			}
 		}
 		onUpdate ();
@@ -261,10 +256,8 @@ public class SimpleController : MonoBehaviour {
 		}
 		//proximity-------
 		if (other.gameObject.tag == CommonStatic.REACTINO_CHARACTER_TAG) {
-			pinchingCharacter = other.gameObject.GetComponentInParent<ReactionCharacterController> ();
+			pinchingCharacter = other.gameObject.GetComponentInParent<AutoWalkMeController> ();
 			onProximityPreset = true;
-
-
 		}
 		OnEnterTrigger (other);
 	}
@@ -288,7 +281,7 @@ public class SimpleController : MonoBehaviour {
 		if (!onprox) {
 			onprox = true;
 			GameObject m = GameObject.FindGameObjectWithTag ("me");
-			pinchingCharacter = m.GetComponentInChildren<ReactionCharacterController> (true);
+			pinchingCharacter = m.GetComponentInChildren<AutoWalkMeController> (true);
 			onProximity = true;
 			initProximity = true;
 			onprox = false;

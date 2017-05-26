@@ -55,15 +55,14 @@ public class testButton : MonoBehaviour {
 			cap.showKumamon ();
 			bt3 = false;
 		}
-
 	}
 
 	bool bt4=false;
 	public void ClickBtn4 () {
 		if (!bt4) {
 			bt4 = true;
-			ReactionCharacterController rc
-			  = GameObject.FindGameObjectWithTag ("me").GetComponentInChildren<ReactionCharacterController> ();;
+			AutoWalkMeController rc
+			= GameObject.FindGameObjectWithTag ("me").GetComponentInChildren<AutoWalkMeController> ();;
 			rc.extFootPrint ();
 			bt4 = false;
 		}

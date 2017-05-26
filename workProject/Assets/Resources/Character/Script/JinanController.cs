@@ -52,6 +52,14 @@ public class JinanController : SimpleController {
 			initWalking = true;
 		}
 
+		if (onProximity) {
+			if (initProximity) {
+				initProximity = false;
+				pinchingCharacter.onProximityState (CommonStatic.SON2NAME_TAG);
+			}
+			onProximity = false;
+		}
+
 		if (onPointState) {
 			if (onPointStateInit) {
 				onPointStateInit = false;
@@ -145,7 +153,6 @@ public class JinanController : SimpleController {
 	}
 
 	public void OnHeadrollEndFlame(){
-		Debug.Log ("OnHeadrollEndFlame");
 		onPointState = false;
 		if (haveClreamObj != null) {
 			Destroy (haveClreamObj);

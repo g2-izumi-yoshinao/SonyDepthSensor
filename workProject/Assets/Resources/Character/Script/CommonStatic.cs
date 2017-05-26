@@ -20,6 +20,11 @@ public class CommonStatic : MonoBehaviour {
 	public static string REACTINO_CHARACTER_TAG = "me";
 	public static string PINCH_POINT_PREFIX = "pinch";
 
+
+	public static string SON1NAME_TAG = "chonan";
+	public static string SON2NAME_TAG = "jinan";
+	public static string SON3NAME_TAG = "sannan";
+
 	//charactre poly to unity 1 float scale scae base
 	public static float charaRateX=0.04f;//scale1 as unity1
 	public static float charaRateY=0.05f;//scale1 as unity1

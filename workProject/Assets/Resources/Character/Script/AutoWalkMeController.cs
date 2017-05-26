@@ -16,28 +16,26 @@ public class AutoWalkMeController : MonoBehaviour {
 
 	public enum ActionOnGroundState {
 		none,
-		walking,
-		meetFirstSon,
-		meetFirstSonOver,
-		meetSecondSon,
-		meetThiredSon
+		walkingFirst,
+		aimToSecondSon,
+		proxToSecondSon,
+		AimToCap
 	}
 		
 	private AnimatorStateInfo currentBaseState;	
 	protected static int BodyAnimationLayor = 0;
 
 	private AnimatorStateInfo currentAnimationState;	
-	static int StandingState = Animator.StringToHash (ANIM_STANDING_LOOP);
-	static int WalkingState = Animator.StringToHash (ANIM_WALKING_LOOP);
 
 	private static string ANIM_BASE_LAYER ="Base Layer";
 	private static string ANIM_STANDING_LOOP = ANIM_BASE_LAYER+"."+"Standing@loop";
 	private static string ANIM_WALKING_LOOP = ANIM_BASE_LAYER+"."+"Walking@loop";
-	private static string ANIM_HEADROLL_ = ANIM_BASE_LAYER+"."+"headRoll";
 
 	private static string ANIM_TRIGGER_STANDING_NAME = "Standing";
 	private static string ANIM_TRIGGER_WALKING_NAME = "Walking";
-	private static string ANIM_TRIGGER_HEADROLL_NAME = "headRoll";
+
+	static int StandingState = Animator.StringToHash (ANIM_STANDING_LOOP);
+	static int WalkingState = Animator.StringToHash (ANIM_WALKING_LOOP);
 
 	private AudioSource sound;
 
@@ -53,7 +51,18 @@ public class AutoWalkMeController : MonoBehaviour {
 	private float forwardSpeed = 0.04f;
 	private int ancflg=1;
 
-	public bool stableType=false;
+	private float walkFirstElapse=0;
+	private float walkFirstElapsetimeOut=6;
+
+	private bool onJinanProximityInit=false;
+
+	private float JinanProximityElapse=0;
+	private float JinanProximityElapsetimeOut=2;
+
+	private Vector2 toCapCenterXY;
+	private float toCapCenterArc;
+
+	private bool aimtoCapInit=false;
 
 	private ActionOnGroundState groundActionState;
 	private ActionOnGroundState groundBaseActionState;
@@ -70,10 +79,14 @@ public class AutoWalkMeController : MonoBehaviour {
 	public GameObject footPrintL=null;
 	public GameObject footPrintR=null;
 	private int footPrintCount;
-	private int footOneTimePrintMaxCount=9;//odd l else r
+	private int footOneTimePrintMaxCount=16;//odd l else r
 	private Vector3 preFootPoint;
 
-	private LoaderBase loader;
+	private LoaderOutScene loader;
+
+	private bool onfadeIn=false;
+	private bool onfadeInWithEffect=false;
+
 
 	public bool onAction=false;
 
@@ -82,13 +95,13 @@ public class AutoWalkMeController : MonoBehaviour {
 		rigid = GetComponent<Rigidbody> ();
 		sound = GetComponent<AudioSource> ();
 
-
-		groundBaseActionState = ActionOnGroundState.walking;
+		groundBaseActionState = ActionOnGroundState.none;
 		groundActionState = groundBaseActionState;
 
 		if (kirakiraEffect != null) {
 			kirakiraEffect.SetActive (false);
 		}
+		rigid.useGravity = false;
 		setAlpha (0f);
 	}
 
@@ -99,8 +112,7 @@ public class AutoWalkMeController : MonoBehaviour {
 			onAction = false;
 		}
 	}
-
-
+		
 	public void clear(){
 		onAction = false;
 	}
@@ -108,31 +120,95 @@ public class AutoWalkMeController : MonoBehaviour {
 
 	void Update () {
 
+
 		if (!onAction) {
 			return;
 		}
-
 		if (loadFirst) {
 			loadFirst = false;
+			walkFirstElapse = 0;
+			onJinanProximityInit = false;
+			aimtoCapInit = false;
 		}
 
-		if (fadeIn ()) {
-			return;
+		if (onfadeIn) {
+			if (fadeIn ()) {
+				return;
+			} else {
+				onfadeIn = false;
+				groundActionState = ActionOnGroundState.walkingFirst;
+			}
 		}
-			
+
+		if (onfadeInWithEffect) {
+			if (fadeIn ()) {
+				return;
+			} else {
+				onfadeInWithEffect = false;
+			}
+		}
+
+		rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+		rigid.useGravity = true;
+		rigid.isKinematic = false;
+
 		currentAnimationState = animator.GetCurrentAnimatorStateInfo (BodyAnimationLayor);
 
-			
 		if (onFootPrintState) {
 			footPrint ();
 		}
-
-		if (groundActionState == ActionOnGroundState.walking) {
-			randomWalk ();
-		} else {
+		if (groundActionState == ActionOnGroundState.none) {
 			if (currentAnimationState.fullPathHash != StandingState) {
 				animator.SetTrigger (ANIM_TRIGGER_STANDING_NAME);
 			}
+			return;
+		}
+
+		if (groundActionState == ActionOnGroundState.walkingFirst) {
+			walkFirstElapse += Time.deltaTime;
+			if (walkFirstElapse < walkFirstElapsetimeOut) {
+				randomWalk ();
+				return;
+			} else {
+				groundActionState = ActionOnGroundState.aimToSecondSon;
+			}
+		}
+		if (groundActionState == ActionOnGroundState.aimToSecondSon) {
+			Transform aimPos = loader.getJinanTransform();
+			walkToward (aimPos.position);
+		}
+
+		if (groundActionState == ActionOnGroundState.proxToSecondSon) {
+			if (onJinanProximityInit) {
+				onJinanProximityInit = false;
+				JinanProximityElapse = 0;
+				animator.SetTrigger (ANIM_TRIGGER_STANDING_NAME);// *なんか切り替わらん
+			}
+			JinanProximityElapse += Time.deltaTime;
+			if (JinanProximityElapse > JinanProximityElapsetimeOut) {
+				aimtoCapInit = true;
+				Vector3 dist = loader.getCapTransform ().position - transform.position;
+				float p1 = dist.magnitude;
+				float p2 = p1 + loader.getCapExecuteSize().x / 2 + (loader.getCharaExecuteSize().x * 1.5f);
+				float ml = p2 / p1;
+				Vector3 mirrorPoint = ml * dist + transform.position;
+				Vector3 center = (transform.position + mirrorPoint) / 2.0f;
+				toCapCenterXY = new Vector2 (center.x, center.z);
+				toCapCenterArc = p2 / 2.0f;
+				groundActionState = ActionOnGroundState.AimToCap;
+			} else {
+				return;
+			}
+		}
+
+		if (groundActionState == ActionOnGroundState.AimToCap) {
+			if (aimtoCapInit) {
+				aimtoCapInit = false;
+				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
+				extFootPrint ();
+			}
+
+			goSannan ();
 		}
 	}
 
@@ -189,6 +265,47 @@ public class AutoWalkMeController : MonoBehaviour {
 		transform.localPosition += transform.forward * forwardSpeed * Time.fixedDeltaTime; 
 	}
 
+
+	private void walkToward(Vector3 aimpos){
+
+		if (currentAnimationState.fullPathHash != WalkingState) {
+			animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
+		}
+		Vector3 direction = (aimpos-transform.position ).normalized;
+		transform.rotation = Quaternion.LookRotation (direction);
+		transform.localPosition += transform.forward * forwardSpeed * Time.fixedDeltaTime; 
+	}
+		
+	private void goSannan(){
+		Vector3 currentPos = transform.position;
+		Vector3 nextPos = goSannanNextPos ();
+		transform.position = nextPos;
+		Vector3 movedir = (transform.position - currentPos).normalized;
+		transform.rotation = Quaternion.LookRotation(movedir);
+	}
+
+	private Vector3 goSannanNextPos(){
+		float eula = 20f*Time.deltaTime;
+		Vector2 currentXY = new Vector2 (transform.position.x, transform.position.z);
+		float cos = Mathf.Cos (eula * Mathf.PI / 180);
+		float sin = Mathf.Sin (eula * Mathf.PI / 180);
+
+		Vector2 nom = currentXY - toCapCenterXY;
+		return  new Vector3 ((nom.x * cos - nom.y * sin) + toCapCenterXY.x, 
+			transform.position.y, (nom.x * sin + nom.y * cos) + toCapCenterXY.y);
+	}
+
+
+	public void onProximityState(string name){
+		if (name == CommonStatic.SON2NAME_TAG) {
+			if (groundActionState == ActionOnGroundState.aimToSecondSon) {
+				onJinanProximityInit = true;
+				groundActionState = ActionOnGroundState.proxToSecondSon;
+			}
+		}
+		
+	}
+
 	void OnBecameInvisible(){
 		ancflg = -1 * ancflg;
 	}
@@ -217,10 +334,25 @@ public class AutoWalkMeController : MonoBehaviour {
 	}
 
 	public void startShow(){
-		fadeIn ();
+		onfadeIn = true;
+	}
+	public void startShowWithEffect(){
+		onfadeInWithEffect = true;
 	}
 
 	private bool fadeIn(){
+		bool onProcess = true;
+
+		alphaVal += Time.deltaTime;
+		if (alphaVal >= 1.0f) {
+			alphaVal = 1.0f;
+			onProcess = false;
+		}
+		setAlpha (alphaVal);
+		return onProcess;
+	}
+
+	private bool fadeInWithEffect(){
 		bool onProcess = true;
 
 		alphaVal += Time.deltaTime;
@@ -326,7 +458,7 @@ public class AutoWalkMeController : MonoBehaviour {
 	}
 
 
-	public void setLoaderReference(LoaderBase loader){
+	public void setLoaderReference(LoaderOutScene loader){
 		this.loader = loader;
 	}
 }
