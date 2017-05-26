@@ -260,7 +260,7 @@ public class SimpleController : MonoBehaviour {
 			return;
 		}
 		//proximity-------
-		if (other.gameObject.tag == ReactionCharacterController.REACTINO_CHARACTER_TAG) {
+		if (other.gameObject.tag == CommonStatic.REACTINO_CHARACTER_TAG) {
 			pinchingCharacter = other.gameObject.GetComponentInParent<ReactionCharacterController> ();
 			onProximityPreset = true;
 
@@ -274,7 +274,7 @@ public class SimpleController : MonoBehaviour {
 
 	void OnTriggerExit(Collider other) {
 		// proximity-------
-		if (other.gameObject.tag == ReactionCharacterController.REACTINO_CHARACTER_TAG) {
+		if (other.gameObject.tag == CommonStatic.REACTINO_CHARACTER_TAG) {
 			pinchingCharacter = null;
 		}
 	}

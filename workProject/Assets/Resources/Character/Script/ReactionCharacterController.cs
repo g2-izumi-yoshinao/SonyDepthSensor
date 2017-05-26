@@ -14,6 +14,11 @@ using UnityEngine;
 
 public class ReactionCharacterController : MonoBehaviour {
 
+	public enum ActionTypeState {
+		incamera,
+		outcamera
+	}
+
 	public enum PinchState {
 		none,
 		cheekLeft,
@@ -30,9 +35,8 @@ public class ReactionCharacterController : MonoBehaviour {
 		meetThiredSon
 	}
 
-		
-	public static string REACTINO_CHARACTER_TAG = "me";
-	public static string PINCH_POINT_PREFIX = "pinch";
+	private ActionTypeState actionType;
+
 	private const string PINCH_CHEEKLFET_NAME = "pinchCheekLeftPoint";
 	private const string PINCH_CHEEKRIGHT_NAME = "pinchCheekRIghtPoint";
 
@@ -156,6 +160,8 @@ public class ReactionCharacterController : MonoBehaviour {
 	private int footOneTimePrintMaxCount=9;//odd l else r
 	private Vector3 preFootPoint;
 
+	private LoaderBase loader;
+
 	public bool onAction=false;
 
 	void Start () {
@@ -184,6 +190,8 @@ public class ReactionCharacterController : MonoBehaviour {
 			onAction = false;
 		}
 	}
+
+
 
 	public void clear(){
 		onAction = false;
@@ -327,58 +335,8 @@ public class ReactionCharacterController : MonoBehaviour {
 			}
 
 			if (groundActionState == ActionOnGroundState.walking) {
-				if (currentAnimationState.fullPathHash != WalkingState) {
-					animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
-				}
-
-				moveframeCnt += 1;
-				if (moveframeCnt > 10000) {
-					moveframeCnt = 0;
-				}
-				float dz = 0f;
-				float dx = 0f;
-
-				dz = ancflg * Mathf.Sin (2.0f * Mathf.PI * sigWait * (float)(moveframeCnt % 200) / (200.0f - 1.0f));
-				dx = ancflg * Mathf.Sqrt (1.0f - Mathf.Pow (dz, 2));
-
-				Vector3 seekPois = transform.position 
-					+ (new Vector3 (dx * forwardSpeed * 2, transform.position.y-0.2f, dz * forwardSpeed * 2));
-
-				//ground check
-				bool findGround = false;
-				Collider[] edges = Physics.OverlapSphere (seekPois, 0.1f, -1, QueryTriggerInteraction.Collide);
-				for (int i = 0; i < edges.Length; i++) {
-					if (edges [i].gameObject.tag == CommonStatic.GROUND_TAG) {
-						findGround = true;
-						break;
-					}
-				}
-
-				//cake,cap,son
-				seekPois = transform.position 
-					+ (new Vector3 (dx * forwardSpeed * 2, transform.position.y+0.1f, dz * forwardSpeed * 2));
-
-				bool entryEny = false;
-				Collider[] objes = Physics.OverlapSphere (seekPois, 0.1f, -1, QueryTriggerInteraction.Collide);
-				for (int i = 0; i < objes.Length; i++) {
-					if ((objes [i].gameObject.tag == CommonStatic.CAP_TAG)||
-						(objes [i].gameObject.tag == CommonStatic.CAKE_TAG)||
-						(objes [i].gameObject.tag == CommonStatic.SON_TAG)){
-						entryEny = true;
-						break;
-					}
-				}
-
-				if ((!findGround)||(entryEny)) {
-					ancflg = -1 * ancflg;
-				}
-
-				Vector3 direction = new Vector3 (dx, 0, dz);
-				transform.rotation = Quaternion.LookRotation (direction);
-				transform.localPosition += transform.forward * forwardSpeed * Time.fixedDeltaTime;
-
+				randomWalk ();
 			} else {
-				//stand idle
 				if (currentAnimationState.fullPathHash != StandingState) {
 					animator.SetTrigger (ANIM_TRIGGER_STANDING_NAME);
 				}
@@ -387,6 +345,59 @@ public class ReactionCharacterController : MonoBehaviour {
 		} else { 
 			groundActionState = groundBaseActionState;
 		}
+	}
+
+	private void randomWalk(){
+		
+		if (currentAnimationState.fullPathHash != WalkingState) {
+			animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
+		}
+
+		moveframeCnt += 1;
+		if (moveframeCnt > 10000) {
+			moveframeCnt = 0;
+		}
+		float dz = 0f;
+		float dx = 0f;
+
+		dz = ancflg * Mathf.Sin (2.0f * Mathf.PI * sigWait * (float)(moveframeCnt % 200) / (200.0f - 1.0f));
+		dx = ancflg * Mathf.Sqrt (1.0f - Mathf.Pow (dz, 2));
+
+		Vector3 seekPois = transform.position 
+				+ (new Vector3 (dx * forwardSpeed * 2, transform.position.y-0.2f, dz * forwardSpeed * 2));
+
+		//ground check
+		bool findGround = false;
+		Collider[] edges = Physics.OverlapSphere (seekPois, 0.1f, -1, QueryTriggerInteraction.Collide);
+		for (int i = 0; i < edges.Length; i++) {
+			if (edges [i].gameObject.tag == CommonStatic.GROUND_TAG) {
+				findGround = true;
+				break;
+			}
+		}
+
+			//cake,cap,son
+		seekPois = transform.position 
+				+ (new Vector3 (dx * forwardSpeed * 2, transform.position.y+0.1f, dz * forwardSpeed * 2));
+
+		bool entryEny = false;
+		Collider[] objes = Physics.OverlapSphere (seekPois, 0.1f, -1, QueryTriggerInteraction.Collide);
+		for (int i = 0; i < objes.Length; i++) {
+			if ((objes [i].gameObject.tag == CommonStatic.CAP_TAG) ||
+			     (objes [i].gameObject.tag == CommonStatic.CAKE_TAG) ||
+			     (objes [i].gameObject.tag == CommonStatic.SON_TAG)) {
+				entryEny = true;
+				break;
+			}
+		}
+
+		if ((!findGround) || (entryEny)) {
+			ancflg = -1 * ancflg;
+		}
+
+		Vector3 direction = new Vector3 (dx, 0, dz);
+		transform.rotation = Quaternion.LookRotation (direction);
+		transform.localPosition += transform.forward * forwardSpeed * Time.fixedDeltaTime; 
 	}
 
 	private void none_LateUpdate(){
@@ -812,10 +823,21 @@ public class ReactionCharacterController : MonoBehaviour {
 
 	}
 
-	public void testFootPrint(){
+	public void extFootPrint(){
 		if (!onFootPrintState) {
 			onFootPrintState = true;
 			onFootPrintInit = true;
+		}
+	}
+		
+
+	public void setActionTypeState(ActionTypeState state, LoaderBase loader){
+		actionType = state;
+		this.loader = loader;
+		if (actionType == ActionTypeState.outcamera) {
+			stableType = false;
+		} else {
+			stableType = true;
 		}
 	}
 }

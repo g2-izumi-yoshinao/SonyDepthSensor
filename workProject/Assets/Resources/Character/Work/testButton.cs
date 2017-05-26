@@ -64,7 +64,7 @@ public class testButton : MonoBehaviour {
 			bt4 = true;
 			ReactionCharacterController rc
 			  = GameObject.FindGameObjectWithTag ("me").GetComponentInChildren<ReactionCharacterController> ();;
-			rc.testFootPrint ();
+			rc.extFootPrint ();
 			bt4 = false;
 		}
 

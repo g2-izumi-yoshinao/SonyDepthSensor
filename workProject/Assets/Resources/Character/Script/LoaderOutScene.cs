@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LoaderOutScene : MonoBehaviour {
+public class LoaderOutScene : LoaderBase {
 
 	public GameObject mePrefab;
 	public ChonanController chonan;
@@ -18,7 +18,7 @@ public class LoaderOutScene : MonoBehaviour {
 	public GameObject cakePrefab;
 	public GameObject capPrefab;
 
-	private ReactionCharacterController meObj;
+	private AutoWalkMeController meObj;
 	private SimpleController[] sonObjs;
 	private GameObject groundObj;
 	private GameObject cakeObj;
@@ -160,17 +160,16 @@ public class LoaderOutScene : MonoBehaviour {
 		CapController cap = capObj.GetComponentInChildren<CapController> (true);
 		cap.showKumamon ();
 
-		//debug----
 		Vector3 meStartPos = new Vector3 (postionGroundCenterXY.x ,
 			groundTop + CommonStatic.charaRateY / 2f,
 			postionCapCenterXY.y+0.04f);
 		GameObject me=Instantiate(mePrefab,meStartPos, SimpleController.identityQue());
 		me.transform.localScale = new Vector3(scaleCharacter, scaleCharacter, scaleCharacter);
-		meObj = me.GetComponentInChildren<ReactionCharacterController> (true);
+		meObj = me.GetComponentInChildren<AutoWalkMeController> (true);
+		AutoWalkMeController rc = meObj.GetComponentInChildren<AutoWalkMeController> (true);
+		rc.setLoaderReference(this);
 		meObj.setAction (true);
 
-		ReactionCharacterController rc = meObj.GetComponentInChildren<ReactionCharacterController> (true);
-		rc.stableType = false;
 
 	}
 

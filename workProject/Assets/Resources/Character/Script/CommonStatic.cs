@@ -17,6 +17,9 @@ public class CommonStatic : MonoBehaviour {
 	public static string PASAPASA_TAG = "pasapasa";
 	public static string CAKE_PIECE_TAG = "cakePiece";
 
+	public static string REACTINO_CHARACTER_TAG = "me";
+	public static string PINCH_POINT_PREFIX = "pinch";
+
 	//charactre poly to unity 1 float scale scae base
 	public static float charaRateX=0.04f;//scale1 as unity1
 	public static float charaRateY=0.05f;//scale1 as unity1

@@ -30,7 +30,7 @@ public class FxOnMe : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other) {
 
-		if (other.gameObject.tag==ReactionCharacterController.REACTINO_CHARACTER_TAG) {
+		if (other.gameObject.tag==CommonStatic.REACTINO_CHARACTER_TAG) {
 			footing = other.gameObject;
 			if (Effect1 != null) {
 				Effect1.SetActive (false);
@@ -40,7 +40,7 @@ public class FxOnMe : MonoBehaviour {
 	}
 
 	void OnTriggerExit(Collider other) {
-		if (other.gameObject.tag==ReactionCharacterController.REACTINO_CHARACTER_TAG){
+		if (other.gameObject.tag==CommonStatic.REACTINO_CHARACTER_TAG){
 			footing = null;
 			Effect1.SetActive (false);
 		}

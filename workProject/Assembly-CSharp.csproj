@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Resources\Character\Script\AncherController.cs" />
+     <Compile Include="Assets\Resources\Character\Script\AutoWalkMeController.cs" />
      <Compile Include="Assets\Resources\Character\Script\CakePiece.cs" />
      <Compile Include="Assets\Resources\Character\Script\CapController.cs" />
      <Compile Include="Assets\Resources\Character\Script\ChonanController.cs" />
@@ -55,6 +56,7 @@
      <Compile Include="Assets\Resources\Character\Script\FxOnMe.cs" />
      <Compile Include="Assets\Resources\Character\Script\JinanController.cs" />
      <Compile Include="Assets\Resources\Character\Script\KumamonController.cs" />
+     <Compile Include="Assets\Resources\Character\Script\LoaderBase.cs" />
      <Compile Include="Assets\Resources\Character\Script\LoaderOutScene.cs" />
      <Compile Include="Assets\Resources\Character\Script\ReactionCharacterController.cs" />
      <Compile Include="Assets\Resources\Character\Script\SannanController.cs" />

@@ -39,8 +39,8 @@ public class AncherController : MonoBehaviour {
 			return;
 		}
 		if (!grapp) {
-			if (other.gameObject.tag.Substring (0, ReactionCharacterController.PINCH_POINT_PREFIX.Length) ==
-			    ReactionCharacterController.PINCH_POINT_PREFIX) {
+			if (other.gameObject.tag.Substring (0, CommonStatic.PINCH_POINT_PREFIX.Length) ==
+				CommonStatic.PINCH_POINT_PREFIX) {
 				lastTargetName = other.tag;
 				pinchingCharacter = other.gameObject.GetComponentInParent<ReactionCharacterController> ();
 			}
@@ -59,8 +59,8 @@ public class AncherController : MonoBehaviour {
 		if (!onAction) {
 			return;
 		}
-		if (other.gameObject.tag.Substring (0, ReactionCharacterController.PINCH_POINT_PREFIX.Length) ==
-			ReactionCharacterController.PINCH_POINT_PREFIX) {
+		if (other.gameObject.tag.Substring (0, CommonStatic.PINCH_POINT_PREFIX.Length) ==
+			CommonStatic.PINCH_POINT_PREFIX) {
 			if (other.tag == lastTargetName) {
 				if ((pinchingCharacter.getPinchState () == ReactionCharacterController.PinchState.cheek_cheek) 
 					||pinchingCharacter.getOnCheekShurink()){
