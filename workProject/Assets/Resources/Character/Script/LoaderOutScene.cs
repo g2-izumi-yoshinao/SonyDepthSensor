@@ -27,6 +27,7 @@ public class LoaderOutScene : LoaderBase {
 	private bool sensorPrepared=false;
 	private bool loaded=false;
 
+	private Vector3 virtualCameraPos;
 	//sencor value estimage 
 	private float groundy=-0.6f;
 	private float scaleCharacter =2.0f; //1.5f;//may required caluc self in relation with cake scale or some
@@ -105,7 +106,7 @@ public class LoaderOutScene : LoaderBase {
 
 
 				Vector3 cameraPos = GameObject.FindGameObjectWithTag ("MainCamera").transform.position;
-				Vector3 VirtualCameraPos = cameraPos;
+				virtualCameraPos = cameraPos;
 
 			    //sons
 				Vector3[] edges;
@@ -122,7 +123,7 @@ public class LoaderOutScene : LoaderBase {
 				sonObjs [0] = chonanObj.GetComponentInChildren<SimpleController> (true);
 			
 				//second son
-				edges= CommonStatic.getSightEdgePoint (cakeObj,cakeExecuteSize.x/2.0f,VirtualCameraPos);
+				edges= CommonStatic.getSightEdgePoint (cakeObj,cakeExecuteSize.x/2.0f,virtualCameraPos);
 				Vector3 secondSonStartPos;
 				secondSonStartPos=edges [1];
 				secondSonStartPos.y = groundTop+CommonStatic.charaRateY / 2f;
@@ -133,7 +134,7 @@ public class LoaderOutScene : LoaderBase {
 				jinanObj.transform.position += new Vector3 (-sideSpan, 0,0);
 
 				//third son
-				edges= CommonStatic.getSightEdgePoint (capObj,capExecuteSize.x/2.0f,VirtualCameraPos);
+				edges= CommonStatic.getSightEdgePoint (capObj,capExecuteSize.x/2.0f,virtualCameraPos);
 				Vector3 edgepos=edges[0];
 				float hideback = (CommonStatic.charaRateY * CommonStatic.outCamScaleCharacter.y)*1.1f;
 				thirdSonStartPos = new Vector3 (edgepos.x+0.02f, 
@@ -143,9 +144,9 @@ public class LoaderOutScene : LoaderBase {
 				sonObjs [2] = sannanObj.GetComponentInChildren<SimpleController> (true);
 
 				//---init ---
-				sonObjs [0].initSon (cakeObj,cakeExecuteSize,VirtualCameraPos);
-				sonObjs [1].initSon (cakeObj,cakeExecuteSize,VirtualCameraPos);
-				sonObjs [2].initSon (capObj,capExecuteSize,VirtualCameraPos);
+				sonObjs [0].initSon (cakeObj,cakeExecuteSize,virtualCameraPos);
+				sonObjs [1].initSon (cakeObj,cakeExecuteSize,virtualCameraPos);
+				sonObjs [2].initSon (capObj,capExecuteSize,virtualCameraPos);
 			
 				startScene ();
 			}
@@ -169,7 +170,7 @@ public class LoaderOutScene : LoaderBase {
 		me.transform.localScale = new Vector3(scaleCharacter, scaleCharacter, scaleCharacter);
 		meObj = me.GetComponentInChildren<AutoWalkMeController> (true);
 		AutoWalkMeController rc = meObj.GetComponentInChildren<AutoWalkMeController> (true);
-		rc.setLoaderReference(this);
+		rc.setLoaderReference(this,virtualCameraPos);
 		meObj.setAction (true);
 
 		meObj.startShow ();
@@ -194,8 +195,8 @@ public class LoaderOutScene : LoaderBase {
 		return sonObjs [1].transform;
 	}
 
-	public Transform getCapTransform(){
-		return capObj.transform;
+	public GameObject getCapObj(){
+		return capObj;
 	}
 
 	public Vector3 getCapExecuteSize(){

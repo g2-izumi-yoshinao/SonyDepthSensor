@@ -19,7 +19,8 @@ public class AutoWalkMeController : MonoBehaviour {
 		walkingFirst,
 		aimToSecondSon,
 		proxToSecondSon,
-		AimToCap
+		AimToCap,
+		onEndPoint
 	}
 		
 	private AnimatorStateInfo currentBaseState;	
@@ -60,9 +61,9 @@ public class AutoWalkMeController : MonoBehaviour {
 	private float JinanProximityElapsetimeOut=2;
 
 	private Vector2 toCapCenterXY;
-	private float toCapCenterArc;
-
 	private bool aimtoCapInit=false;
+	private Collider kumamonCollider;
+	private bool onEndPointInit=false;
 
 	private ActionOnGroundState groundActionState;
 	private ActionOnGroundState groundBaseActionState;
@@ -86,6 +87,8 @@ public class AutoWalkMeController : MonoBehaviour {
 
 	private bool onfadeIn=false;
 	private bool onfadeInWithEffect=false;
+
+	private Vector3 VirtualCameraPos;
 
 
 	public bool onAction=false;
@@ -119,7 +122,6 @@ public class AutoWalkMeController : MonoBehaviour {
 
 
 	void Update () {
-
 
 		if (!onAction) {
 			return;
@@ -187,14 +189,13 @@ public class AutoWalkMeController : MonoBehaviour {
 			JinanProximityElapse += Time.deltaTime;
 			if (JinanProximityElapse > JinanProximityElapsetimeOut) {
 				aimtoCapInit = true;
-				Vector3 dist = loader.getCapTransform ().position - transform.position;
+				Vector3 dist = loader.getCapObj().transform.position - transform.position;
 				float p1 = dist.magnitude;
 				float p2 = p1 + loader.getCapExecuteSize().x / 2 + (loader.getCharaExecuteSize().x * 1.5f);
 				float ml = p2 / p1;
 				Vector3 mirrorPoint = ml * dist + transform.position;
 				Vector3 center = (transform.position + mirrorPoint) / 2.0f;
 				toCapCenterXY = new Vector2 (center.x, center.z);
-				toCapCenterArc = p2 / 2.0f;
 				groundActionState = ActionOnGroundState.AimToCap;
 			} else {
 				return;
@@ -205,10 +206,23 @@ public class AutoWalkMeController : MonoBehaviour {
 			if (aimtoCapInit) {
 				aimtoCapInit = false;
 				animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
+				KumamonController kuma = loader.getCapObj ().GetComponentInChildren<KumamonController> (true);
+				kumamonCollider=kuma.gameObject.GetComponent<Collider> ();
 				extFootPrint ();
 			}
-
 			goSannan ();
+		}
+
+		if (groundActionState == ActionOnGroundState.onEndPoint) {
+			if (onEndPointInit) {
+				onEndPointInit = false;
+				animator.SetTrigger (ANIM_TRIGGER_STANDING_NAME);
+			}
+			if (fadeOut ()) {
+				return;
+			} else {
+				// go last
+			}
 		}
 	}
 
@@ -277,6 +291,19 @@ public class AutoWalkMeController : MonoBehaviour {
 	}
 		
 	private void goSannan(){
+
+		Vector3 rayPos = new Vector3 (transform.position.x, 
+			transform.position.y+loader.getCharaExecuteSize().y*1/2f, 
+			transform.position.z);
+		Vector3 rayDir = (VirtualCameraPos - rayPos).normalized;
+		Ray ray = new Ray(rayPos,rayDir);
+		RaycastHit hit;
+		if (kumamonCollider.Raycast (ray, out hit, 5.0f)) {
+			onEndPointInit = true;
+			groundActionState = ActionOnGroundState.onEndPoint;
+		}
+
+
 		Vector3 currentPos = transform.position;
 		Vector3 nextPos = goSannanNextPos ();
 		transform.position = nextPos;
@@ -285,7 +312,7 @@ public class AutoWalkMeController : MonoBehaviour {
 	}
 
 	private Vector3 goSannanNextPos(){
-		float eula = 20f*Time.deltaTime;
+		float eula = 14f*Time.deltaTime;
 		Vector2 currentXY = new Vector2 (transform.position.x, transform.position.z);
 		float cos = Mathf.Cos (eula * Mathf.PI / 180);
 		float sin = Mathf.Sin (eula * Mathf.PI / 180);
@@ -456,9 +483,9 @@ public class AutoWalkMeController : MonoBehaviour {
 			onFootPrintInit = true;
 		}
 	}
-
-
-	public void setLoaderReference(LoaderOutScene loader){
+		
+	public void setLoaderReference(LoaderOutScene loader,Vector3 camerapos){
 		this.loader = loader;
+		VirtualCameraPos = camerapos;
 	}
 }
