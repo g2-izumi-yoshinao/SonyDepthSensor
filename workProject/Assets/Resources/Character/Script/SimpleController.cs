@@ -58,9 +58,6 @@ public class SimpleController : MonoBehaviour {
 	}
 	
 	void Update () {
-		if (!onAction) {
-			return;
-		}
 		if (loadFirst) {
 			commonInit ();
 		}
@@ -77,6 +74,13 @@ public class SimpleController : MonoBehaviour {
 			} else {
 				onFadeIn = false;
 			}
+		}
+
+		if (!onAction) {
+			if (currentAnimationState.fullPathHash != StandingState) {
+				animator.SetTrigger (ANIM_TRIGGER_STANDING_NAME);
+			}
+			return;
 		}
 
 		if (onProximityPreset) {

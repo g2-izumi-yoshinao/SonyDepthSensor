@@ -167,7 +167,6 @@ public class LoaderOutScene : LoaderBase {
 
 	private void startMainScene(){
 		foreach(SimpleController mb in sonObjs){
-			mb.setAction (true);
 			mb.doFadeIn ();
 		}
 			
@@ -217,12 +216,23 @@ public class LoaderOutScene : LoaderBase {
 		startMainScene ();
 	}
 
+	// event visible 
 	public void onShow(){
 		//member loaded
 	}
 
+	// methoad to action start
 	public void startMeWalking(){
+		foreach(SimpleController mb in sonObjs){
+			mb.setAction (true);
+		}
 		AutoWalkMeController rc = meObj.GetComponentInChildren<AutoWalkMeController> (true);
 		rc.startWalking ();
+	}
+
+	//methoad to end state
+	public void meToEndState() {
+		AutoWalkMeController rc = meObj.GetComponentInChildren<AutoWalkMeController> (true);
+		rc.toEndState ();
 	}
 }

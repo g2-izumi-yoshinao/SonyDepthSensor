@@ -93,4 +93,16 @@ public class testButton : MonoBehaviour {
 		}
 
 	}
+
+	bool bt7=false;
+	public void ClickBtn7 () {
+		if (!bt7) {
+			bt7 = true;
+			GameObject loaderObj = GameObject.FindGameObjectWithTag ("outSeenLoader");
+			LoaderOutScene loader = loaderObj.GetComponentInChildren<LoaderOutScene> (true);
+			loader.meToEndState ();
+			bt7 = false;
+		}
+
+	}
 }

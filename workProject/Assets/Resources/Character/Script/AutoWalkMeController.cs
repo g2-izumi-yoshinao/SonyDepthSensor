@@ -26,7 +26,8 @@ public class AutoWalkMeController : MonoBehaviour {
 		aimToSecondSon,
 		proxToSecondSon,
 		AimToCap,
-		onEndPoint
+		onEndPoint,
+		endState
 	}
 		
 	private AnimatorStateInfo currentBaseState;	
@@ -78,6 +79,7 @@ public class AutoWalkMeController : MonoBehaviour {
 	private bool aimtoCapInit=false;
 	private Collider kumamonCollider;
 	private bool onEndPointInit=false;
+	private bool onEndStateInit=false;
 
 	private ActionOnGroundState groundActionState;
 	private ActionOnGroundState groundBaseActionState;
@@ -254,9 +256,25 @@ public class AutoWalkMeController : MonoBehaviour {
 			}
 			if (fadeOut ()) {
 				return;
-			} else {
-				groundActionState = ActionOnGroundState.none;
-				// go last
+			}
+		}
+
+		if (groundActionState == ActionOnGroundState.endState) {
+			if (onEndStateInit) {
+				onEndStateInit = false;
+				Vector3 onCapPos = new Vector3 (
+					                  loader.getCapObj ().transform.position.x,
+					                  transform.position.y + loader.getCharaExecuteSize ().y /3,
+					                  loader.getCapObj ().transform.position.z);
+				
+				transform.position = onCapPos;
+				CapController cap = loader.getCapObj ().GetComponentInChildren<CapController> (true);
+				lookCamera ();
+				cap.extYugekStart ();
+			}
+			rigid.useGravity = false;
+			if (fadeIn ()) {
+				return;
 			}
 		}
 	}
@@ -541,5 +559,21 @@ public class AutoWalkMeController : MonoBehaviour {
 	public void setLoaderReference(LoaderOutScene loader,Vector3 camerapos){
 		this.loader = loader;
 		VirtualCameraPos = camerapos;
+	}
+
+	public void toEndState(){
+		if (groundActionState == ActionOnGroundState.onEndPoint) {
+			onEndStateInit = true;
+			groundActionState = ActionOnGroundState.endState;
+		}
+	}
+
+	protected void lookCamera(){
+		Vector3 cameraPos = VirtualCameraPos;
+		Vector3 cameraX0Y = new Vector3 (cameraPos.x,transform.position.y,cameraPos.z);
+
+		//とりあえず直向
+		transform.LookAt(cameraX0Y);
+
 	}
 }

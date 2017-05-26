@@ -79,9 +79,8 @@ public class CapController : MonoBehaviour {
 		kumamonController.onPointNotify = onPointDelegate;
 		yugeEffect.SetActive (true);
 		waterSurfaceEffect.SetActive (true);
-
 	}
-
+		
 	//kumamono pointed
 	public void onPointDelegate(bool onPoint){
 		if (onPoint) {
@@ -90,5 +89,13 @@ public class CapController : MonoBehaviour {
 		} else {
 			onWaterOverflow = false;
 		}
+	}
+
+	public void extYugekStart(){
+		yugeEffect.SetActive (true);
+	}
+
+	public void extYugeEnd(){
+		yugeEffect.SetActive (false);
 	}
 }
