@@ -523,7 +523,7 @@ public class AutoWalkMeController : MonoBehaviour {
 			if (footPrintCount % 2 == 0) {
 				Instantiate (footPrintL, transform.position, footPrintL.transform.rotation);
 			} else {
-				Instantiate (footPrintR, transform.position, footPrintL.transform.rotation);
+				Instantiate (footPrintR, transform.position, footPrintR.transform.rotation);
 			}
 			preFootPoint = transform.position;
 			footPrintCount++;
