@@ -23,7 +23,7 @@ public class JinanController : SimpleController {
 	private float perRnd=1;//3
 	private bool initWalking=false;
 	private float currentRnd=0;
-	private const float oneTimeRnd=30;
+	private const float oneTimeRnd=20;
 	private bool initHaving=false;
 	private float havingElapse;
 	private float havingTimeOut=4;//sec
