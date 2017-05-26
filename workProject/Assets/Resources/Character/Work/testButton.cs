@@ -68,4 +68,29 @@ public class testButton : MonoBehaviour {
 		}
 
 	}
+
+	bool bt5=false;
+	public void ClickBtn5 () {
+		if (!bt5) {
+			bt5 = true;
+			GameObject loaderObj = GameObject.FindGameObjectWithTag ("outSeenLoader");
+			LoaderOutScene loader = loaderObj.GetComponentInChildren<LoaderOutScene> (true);
+
+			loader.startScene(new Vector3(0f,0f,0.6f));
+			bt5 = false;
+		}
+
+	}
+
+	bool bt6=false;
+	public void ClickBtn6 () {
+		if (!bt6) {
+			bt6 = true;
+			GameObject loaderObj = GameObject.FindGameObjectWithTag ("outSeenLoader");
+			LoaderOutScene loader = loaderObj.GetComponentInChildren<LoaderOutScene> (true);
+			loader.startMeWalking ();
+			bt6 = false;
+		}
+
+	}
 }

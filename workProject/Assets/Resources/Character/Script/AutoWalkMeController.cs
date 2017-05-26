@@ -14,6 +14,12 @@ using UnityEngine;
 
 public class AutoWalkMeController : MonoBehaviour {
 
+	public delegate void onShowWithEffectDelegate();
+	public delegate void onShowDelegate();
+
+	public onShowWithEffectDelegate onShowWithEffect;
+	public onShowDelegate onShow;
+
 	public enum ActionOnGroundState {
 		none,
 		walkingFirst,
@@ -47,13 +53,21 @@ public class AutoWalkMeController : MonoBehaviour {
 	public Material material_greenM;
 	public Material material_hadaM;
 
+	private float wakeUpElapse=0;
+	private float wakeUpElapsetimeOut=3;
+	private float wakeUpEndElapse=0;
+	private float wakeUpEndElapsetimeOut=3;
+
+
 	private int moveframeCnt = 0;
 	private float sigWait = 1.0f;
 	private float forwardSpeed = 0.04f;
 	private int ancflg=1;
 
 	private float walkFirstElapse=0;
-	private float walkFirstElapsetimeOut=6;
+	private float walkFirstElapsetimeOut=4;
+
+
 
 	private bool onJinanProximityInit=false;
 
@@ -86,6 +100,7 @@ public class AutoWalkMeController : MonoBehaviour {
 	private LoaderOutScene loader;
 
 	private bool onfadeIn=false;
+	private bool onfadeInWithEffectInit=false;
 	private bool onfadeInWithEffect=false;
 
 	private Vector3 VirtualCameraPos;
@@ -128,9 +143,33 @@ public class AutoWalkMeController : MonoBehaviour {
 		}
 		if (loadFirst) {
 			loadFirst = false;
-			walkFirstElapse = 0;
 			onJinanProximityInit = false;
 			aimtoCapInit = false;
+		}
+
+		if (onfadeInWithEffect) {
+			if (onfadeInWithEffectInit) {
+				if (fadeInWithEffect ()) {
+					return;
+				} else {
+					onfadeInWithEffectInit = false;
+				}
+			}
+			wakeUpElapse += Time.deltaTime;
+			if (wakeUpElapse > wakeUpElapsetimeOut) {
+				if (fadeOut ()) {
+				} else {
+					wakeUpEndElapse += Time.deltaTime;
+					if (wakeUpEndElapse > wakeUpElapsetimeOut) {
+						onfadeInWithEffect = false;
+						if (onShowWithEffect != null) {
+							onShowWithEffect ();
+						}
+					}
+				}
+				return;
+			}
+			return;
 		}
 
 		if (onfadeIn) {
@@ -138,15 +177,10 @@ public class AutoWalkMeController : MonoBehaviour {
 				return;
 			} else {
 				onfadeIn = false;
-				groundActionState = ActionOnGroundState.walkingFirst;
-			}
-		}
-
-		if (onfadeInWithEffect) {
-			if (fadeIn ()) {
-				return;
-			} else {
-				onfadeInWithEffect = false;
+				groundActionState = ActionOnGroundState.none;
+				if (onShow != null) {
+					onShow ();
+				}
 			}
 		}
 
@@ -221,6 +255,7 @@ public class AutoWalkMeController : MonoBehaviour {
 			if (fadeOut ()) {
 				return;
 			} else {
+				groundActionState = ActionOnGroundState.none;
 				// go last
 			}
 		}
@@ -364,7 +399,12 @@ public class AutoWalkMeController : MonoBehaviour {
 		onfadeIn = true;
 	}
 	public void startShowWithEffect(){
+		onfadeInWithEffectInit = true;
 		onfadeInWithEffect = true;
+	}
+
+	public void startWalking(){
+		groundActionState = ActionOnGroundState.walkingFirst;
 	}
 
 	private bool fadeIn(){
@@ -422,10 +462,24 @@ public class AutoWalkMeController : MonoBehaviour {
 			material_hadaM.color 
 				= new Color (material_hadaM.color.r, material_hadaM.color.g, material_hadaM.color.b, alpha);
 
-			CommonStatic.SetBlendMode(material_texture1,CommonStatic.blendMode.Opaque);
-			CommonStatic.SetBlendMode(material_texture2,CommonStatic.blendMode.Opaque);
-			CommonStatic.SetBlendMode(material_greenM,CommonStatic.blendMode.Opaque);
-			CommonStatic.SetBlendMode(material_hadaM,CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode (material_texture1, CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode (material_texture2, CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode (material_greenM, CommonStatic.blendMode.Opaque);
+			CommonStatic.SetBlendMode (material_hadaM, CommonStatic.blendMode.Opaque);
+
+		} else if (alpha == 0.0) {
+			CommonStatic.SetBlendMode (material_texture1, CommonStatic.blendMode.Cutout);
+			CommonStatic.SetBlendMode (material_texture2, CommonStatic.blendMode.Cutout);
+			CommonStatic.SetBlendMode (material_greenM, CommonStatic.blendMode.Cutout);
+			CommonStatic.SetBlendMode (material_hadaM, CommonStatic.blendMode.Cutout);
+			material_texture1.color 
+				= new Color (material_texture1.color.r, material_texture1.color.g, material_texture1.color.b, alpha);
+			material_texture2.color 
+				= new Color (material_texture2.color.r, material_texture2.color.g, material_texture2.color.b, alpha);
+			material_greenM.color 
+				= new Color (material_greenM.color.r, material_greenM.color.g, material_greenM.color.b, alpha);
+			material_hadaM.color 
+				= new Color (material_hadaM.color.r, material_hadaM.color.g, material_hadaM.color.b, alpha);
 
 		}else{
 			CommonStatic.SetBlendMode(material_texture1,CommonStatic.blendMode.Transparent);
