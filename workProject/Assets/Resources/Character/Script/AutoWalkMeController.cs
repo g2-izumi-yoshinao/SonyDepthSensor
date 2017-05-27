@@ -31,7 +31,7 @@ public class AutoWalkMeController : MonoBehaviour {
 	}
 		
 	private AnimatorStateInfo currentBaseState;	
-	protected static int BodyAnimationLayor = 0;
+	private static int BodyAnimationLayor = 0;
 
 	private AnimatorStateInfo currentAnimationState;	
 
@@ -282,6 +282,7 @@ public class AutoWalkMeController : MonoBehaviour {
 	private void randomWalk(){
 
 		if (currentAnimationState.fullPathHash != WalkingState) {
+//Debug.Log ("ANIM_TRIGGER_WALKING_NAME2");
 			animator.SetTrigger (ANIM_TRIGGER_WALKING_NAME);
 		}
 
